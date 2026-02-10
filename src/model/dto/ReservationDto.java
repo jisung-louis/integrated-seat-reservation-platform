@@ -21,4 +21,5 @@ public class ReservationDto {
     public void setSeat_code(String seat_code) { this.seat_code = seat_code; }
     public String getReservedAt() { return reservedAt; }
     public void setReservedAt(String reservedAt) { this.reservedAt = reservedAt; }
+
 }
