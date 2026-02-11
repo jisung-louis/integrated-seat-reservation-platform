@@ -8,9 +8,9 @@ public interface ReservationDao {
     /**
      *
      * @param user_no 유저 번호
-     * @param seat_code 좌석 코드
+     * @param seat_code 예약할 좌석 코드
      * @return 성공 : true, 실패 : false
-     * @apiNote 예약하는 유저의 번호와 예약할 좌석 코드를 매개변수로 받아 성공/실패 여부를 반환
+     * @apiNote [예약하는 유저의 번호]와 [예약할 좌석 코드]를 매개변수로 받아 [성공/실패 여부]를 반환
      */
     boolean doReservation(int user_no, String seat_code);
     /**
@@ -22,7 +22,19 @@ public interface ReservationDao {
      * @사용예시: 1번 유저가 1-A-3에서 1-B-4로 바꾼다면, 매개변수는 (1, "1-A-3", "1-B-4")로 입력하면 됩니다.
      */
     boolean updateReservation(int user_no, String current_seat_code, String updating_seat_code);
+    /**
+     *
+     * @param user_no 유저 번호
+     * @param seat_code 삭제할 좌석 코드
+     * @return 성공 : true, 실패 : false
+     */
     boolean deleteReservation(int user_no, String seat_code);
+    /**
+     *
+     * @param store_no 매장 번호
+     * @return 성공 : true, 실패 : false
+     * @apiNote [매장 번호]를 매개변수로 받아 해당 매장의 [예약 목록]을 반환
+     */
     ArrayList<ReservationDto> getReservationsByStoreNo(int store_no);
     ArrayList<ReservationDto> getReservationsByUserNo(int user_no);
 }
