@@ -22,4 +22,13 @@ public class ReservationDto {
     public String getReservedAt() { return reservedAt; }
     public void setReservedAt(String reservedAt) { this.reservedAt = reservedAt; }
 
+    @Override
+    public String toString() {
+        return "ReservationDto{" +
+                "no=" + no +
+                ", user_no=" + user_no +
+                ", seat_code='" + seat_code + '\'' +
+                ", reservedAt='" + reservedAt + '\'' +
+                '}';
+    }
 }
