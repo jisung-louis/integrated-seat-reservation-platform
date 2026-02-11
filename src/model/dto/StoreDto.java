@@ -11,12 +11,12 @@ public class StoreDto {
     private String bh_weekdays;
     private String bh_saturday;
     private String bh_sunday;
-    private int staus;
+    private int status;
 
     public StoreDto() {
     }
 
-    public StoreDto(int no, int owner_no, String name, String category, String address, String contact, String email, String bh_weekdays, String bh_saturday, String bh_sunday, int staus) {
+    public StoreDto(int no, int owner_no, String name, String category, String address, String contact, String email, String bh_weekdays, String bh_saturday, String bh_sunday, int status) {
         this.no = no;
         this.owner_no = owner_no;
         this.name = name;
@@ -27,7 +27,7 @@ public class StoreDto {
         this.bh_weekdays = bh_weekdays;
         this.bh_saturday = bh_saturday;
         this.bh_sunday = bh_sunday;
-        this.staus = staus;
+        this.status = status;
     }
 
     public int getNo() {
@@ -110,12 +110,12 @@ public class StoreDto {
         this.bh_sunday = bh_sunday;
     }
 
-    public int getStaus() {
-        return staus;
+    public int getStatus() {
+        return status;
     }
 
-    public void setStaus(int staus) {
-        this.staus = staus;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     @Override
@@ -130,7 +130,7 @@ public class StoreDto {
                 ", bh_weekdays='" + bh_weekdays + '\'' +
                 ", bh_saturday='" + bh_saturday + '\'' +
                 ", bh_sunday='" + bh_sunday + '\'' +
-                ", staus=" + staus +
+                ", status=" + status +
                 '}';
     }
 }
