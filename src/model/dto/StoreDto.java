@@ -1,70 +1,127 @@
 package model.dto;
 
 public class StoreDto {
-
     private int no;
-    private String id;
-    private String password;
+    private int owner_no;
     private String name;
-    private boolean isAdmin;
+    private String category;
+    private String address;
+    private String email;
+    private String bh_weekdays;
+    private String bh_saturday;
+    private String bh_sunday;
+    private int staus;
 
-    public StoreDto() {};
-    public StoreDto(int no, String id, String password, String name, boolean isAdmin) {
+    public StoreDto() {
+    }
+
+    public StoreDto(int no, int owner_no, String name, String category, String address, String email, String bh_weekdays, String bh_saturday, String bh_sunday, int staus) {
         this.no = no;
-        this.id = id;
-        this.password = password;
+        this.owner_no = owner_no;
         this.name = name;
-        this.isAdmin = isAdmin;
-    }
-
-    public int getNo() {
-        return no;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public boolean isAdmin() {
-        return isAdmin;
+        this.category = category;
+        this.address = address;
+        this.email = email;
+        this.bh_weekdays = bh_weekdays;
+        this.bh_saturday = bh_saturday;
+        this.bh_sunday = bh_sunday;
+        this.staus = staus;
     }
 
     public void setNo(int no) {
         this.no = no;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setOwner_no(int owner_no) {
+        this.owner_no = owner_no;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setAdmin(boolean admin) {
-        isAdmin = admin;
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setBh_weekdays(String bh_weekdays) {
+        this.bh_weekdays = bh_weekdays;
+    }
+
+    public void setBh_saturday(String bh_saturday) {
+        this.bh_saturday = bh_saturday;
+    }
+
+    public void setBh_sunday(String bh_sunday) {
+        this.bh_sunday = bh_sunday;
+    }
+
+    public void setStaus(int staus) {
+        this.staus = staus;
+    }
+
+    public int getNo() {
+        return no;
+    }
+
+    public int getOwner_no() {
+        return owner_no;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getBh_weekdays() {
+        return bh_weekdays;
+    }
+
+    public String getBh_saturday() {
+        return bh_saturday;
+    }
+
+    public String getBh_sunday() {
+        return bh_sunday;
+    }
+
+    public int getStaus() {
+        return staus;
     }
 
     @Override
     public String toString() {
-        return "StoreDto{" +
+        return "UserDto{" +
                 "no=" + no +
-                ", id='" + id + '\'' +
-                ", password='" + password + '\'' +
+                ", owner_no=" + owner_no +
                 ", name='" + name + '\'' +
-                ", isAdmin=" + isAdmin +
+                ", category='" + category + '\'' +
+                ", address='" + address + '\'' +
+                ", email='" + email + '\'' +
+                ", bh_weekdays='" + bh_weekdays + '\'' +
+                ", bh_saturday='" + bh_saturday + '\'' +
+                ", bh_sunday='" + bh_sunday + '\'' +
+                ", staus=" + staus +
                 '}';
     }
 }
+
