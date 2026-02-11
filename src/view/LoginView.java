@@ -1,6 +1,6 @@
 package view;
 
-import Session.Session;
+import session.Session;
 import controller.UserController;
 import model.dto.UserDto;
 
