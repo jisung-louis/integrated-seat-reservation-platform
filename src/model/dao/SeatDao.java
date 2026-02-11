@@ -1,12 +1,12 @@
 package model.dao;
 
-import controller.ReservationController;
+import model.dto.SeatDto;
 
-public class SeatDao {
-    // [1] 싱글톤
-    private SeatDao(){}
-    private static SeatDao instance = new SeatDao();
-    public static SeatDao getInstance() {
-        return instance;
-    }
+import java.util.ArrayList;
+
+public interface SeatDao {
+    boolean addSeats();
+    boolean updateSeats();
+    boolean deleteSeats();
+    ArrayList<SeatDto> getSeats();
 }
