@@ -1,6 +1,7 @@
 package view;
 
 import constant.SeatPolicy;
+import controller.ReservationController;
 import controller.SeatController;
 import controller.StoreController;
 
@@ -319,6 +320,37 @@ public class AdminView {
                 System.out.println("비활성화 성공");
             } else if (result == 3) {
                 System.out.println("적절하지 않은 좌표 코드 입력 (rowCode-colNum 꼴로 입력해야 함)");
+            }
+        }
+    }
+
+    public void adminReservationView(int store_no, String storeName) {
+        while (true) {
+            System.out.println("\n╔══════════════════════════════════════════════════╗");
+            System.out.println("║                    전체 예약 내역                     ║");
+            System.out.println("╚══════════════════════════════════════════════════╝");
+            System.out.println("매장: " + storeName);
+            System.out.println("조회일: " + LocalDate.now());
+            System.out.println();
+
+            // [C 담당자 영역] 좌석 배치도 출력
+            ArrayList<SeatDto> seats = seatC.getSeats(store_no);
+
+            // [B 담당자 영역] 예약 목록 출력
+            ReservationController.getInstance().getStoreReservations(store_no);
+
+            System.out.println("n. 다음 페이지 | p. 이전 페이지 | 0. 뒤로 가기");
+            System.out.print("선택 >> ");
+            String ch = scan.next();
+
+            if (ch.equals("0")) {
+                break;
+            } else if (ch.equalsIgnoreCase("n")) {
+                System.out.println(">> 다음 페이지로 이동합니다.");
+            } else if (ch.equalsIgnoreCase("p")) {
+                System.out.println(">> 이전 페이지로 이동합니다.");
+            } else {
+                System.out.println(">> 잘못된 입력입니다.");
             }
         }
     }
