@@ -3,16 +3,16 @@ package model.dto;
 public class SeatDto {
     private String code;
     private int store_no;
-    private String rowCode;
-    private String colNum;
+    private String colCode;
+    private String rowNum;
     private int status;
 
     public SeatDto() {}
-    public SeatDto(String code, int store_no, String rowCode, String colNum, int status) {
+    public SeatDto(String code, int store_no, String colCode, String rowNum, int status) {
         this.code = code;
         this.store_no = store_no;
-        this.rowCode = rowCode;
-        this.colNum = colNum;
+        this.colCode = colCode;
+        this.rowNum = rowNum;
         this.status = status;
     }
 
@@ -20,10 +20,10 @@ public class SeatDto {
     public void setCode(String code) { this.code = code; }
     public int getStore_no() { return store_no; }
     public void setStore_no(int store_no) { this.store_no = store_no; }
-    public String getRowCode() { return rowCode; }
-    public void setRowCode(String rowCode) { this.rowCode = rowCode; }
-    public String getColNum() { return colNum; }
-    public void setColNum(String colNum) { this.colNum = colNum; }
+    public String getColCode() { return colCode; }
+    public void setColCode(String colCode) { this.colCode = colCode; }
+    public String getRowNum() { return rowNum; }
+    public void setRowNum(String rowNum) { this.rowNum = rowNum; }
     public int getStatus() { return status;}
     public void setStatus(int status) { this.status = status; }
 
@@ -32,8 +32,8 @@ public class SeatDto {
         return "SeatDto{" +
                 "code='" + code + '\'' +
                 ", store_no=" + store_no +
-                ", rowCode='" + rowCode + '\'' +
-                ", colNum='" + colNum + '\'' +
+                ", colCode='" + colCode + '\'' +
+                ", rowNum='" + rowNum + '\'' +
                 ", status=" + status +
                 '}';
     }
