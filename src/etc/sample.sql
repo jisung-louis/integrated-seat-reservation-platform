@@ -33,8 +33,8 @@ create table seat(
     code varchar(30) not null,
     constraint primary key (code), 
     store_no int not null,
-    rowcode varchar(10) not null,
-    colnum varchar(10) not null,
+    colcode varchar(10) not null,
+    rownum varchar(10) not null,
     status int default 0
 );
 
@@ -73,7 +73,7 @@ INSERT INTO store (no, name, category, owner_no, address, contact, email, bh_wee
 (10, '서브웨이 을지로', '샌드위치', 6, '서울시 중구', '02-000-0000', 'sub_eul@test.com', '08:00-22:00', '09:00-21:00', '09:00-20:00', 1);
 
 -- C. Seat 데이터
-INSERT INTO seat (code, store_no, rowcode, colnum, status) VALUES 
+INSERT INTO seat (code, store_no, colcode, rownum, status) VALUES 
 ('1-A-3', 1, 'A', '3', 0),
 ('1-A-4', 1, 'A', '4', 1),
 ('1-A-5', 1, 'A', '5', 0),
