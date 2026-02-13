@@ -10,7 +10,7 @@ public interface SeatDao {
      * @param seatCode 좌석 코드 (매장번호-colCode-rowNum)
      * @return 좌석 추가 성공 여부(true or false)
      */
-    boolean addSeats(String seatCode);
+    boolean addSeat(String seatCode);
     int AVAILABLE = 0;
     int RESERVED = 1;
     /**
@@ -26,7 +26,7 @@ public interface SeatDao {
      * @param seatCode 좌석 코드 (매장번호-colCode-rowNum)
      * @return 좌석 삭제 성공 여부(true or false)
      */
-    boolean deleteSeats(String seatCode);
+    boolean deleteSeat(String seatCode);
 
     /**
      *
