@@ -1,18 +1,17 @@
 package view;
 
 import constant.SeatPolicy;
-import controller.ReservationController;
+import controller.SeatController;
 import controller.StoreController;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.Objects;
 import java.util.Scanner;
-import controller.StoreController;
+
 import model.dto.SeatDto;
 import model.dto.StoreDto;
-
-import java.util.ArrayList;
 
 public class AdminView {
     // [1] 싱글톤
@@ -23,6 +22,7 @@ public class AdminView {
     }
     Scanner scan=new Scanner(System.in);
     StoreController sc=StoreController.getInstance();
+    SeatController seatC = SeatController.getInstance();
     public void index(){
         for(;;){
             try {
@@ -145,46 +145,103 @@ public class AdminView {
      * @implNote 관리자 메인화면 -> 매장 선택 -> 2. 좌석배치관리 클릭 시 호출되는 화면
      */
     public void seatManagementView(int store_no){
-        // STATUS
-//        StoreDto store = sc.getStoreDetail(store_no);
-//        String storeName = store.getName();
+        for(;;) {
+            // STATUS
+            StoreDto store = sc.getStore(store_no);
+            String storeName = store.getName();
+            ArrayList<SeatDto> seats = seatC.getSeats(store_no);
 
-//        ArrayList<SeatDto> seats = sc.getSeats(store_no);
+            int totalSeats = seats.size();
 
-        //for test
-        String storeName = "테스트 매장";
-        ArrayList<SeatDto> seats = new ArrayList<>();
-        seats.add(new SeatDto("1-A-3",store_no,"A","3",0));
-        seats.add(new SeatDto("1-A-4",store_no,"A","4",0));
-        seats.add(new SeatDto("1-B-5",store_no,"B","5",0));
-        //for test end
-
-        int totalSeats = seats.size();
-
-        System.out.println("╔══════════════════════════════════════════════════╗");
-        System.out.println("║                    좌석 배치 관리                   ║");
-        System.out.println("╚══════════════════════════════════════════════════╝");
-        System.out.println();
-        System.out.println("매장 : " + storeName);
-        System.out.println("총 좌석 : " + totalSeats);
-        for (int row = 1; row <= SeatPolicy.MAX_SEAT_ROW_COUNT; row++) {
+            System.out.println("╔══════════════════════════════════════════════════╗");
+            System.out.println("║                    좌석 배치 관리                   ║");
+            System.out.println("╚══════════════════════════════════════════════════╝");
             System.out.println();
-            for(int column = 1; column <= SeatPolicy.MAX_SEAT_COLUMN_COUNT; column++){
-                if(isSeatExist(seats, row, column)){
-                    System.out.print("◼  ");
-                }
-                else {
-                    System.out.print("☐  ");
-                }
+            System.out.println("매장 : " + storeName);
+            System.out.println("총 좌석 : " + totalSeats);
+            System.out.println();
+
+            showSeatingChart(seats); // 좌석 배치도 출력
+
+            System.out.println("1. 좌석 활성화/비활성화");
+            System.out.println("2. 모든 좌석 활성화");
+            System.out.println("3. 모든 좌석 비활성화");
+            System.out.println("4. 뒤로가기");
+            System.out.println();
+            System.out.print("선택 > ");
+            int ch = scan.nextInt();
+            if (ch == 1) {
+                seatActivatingView(store_no);
+            } else if (ch == 2) {
+                // TODO : 모든 좌석 활성화하는 Controller 함수 호출
+            } else if (ch == 3) {
+                // TODO : 모든 좌석 비활성화하는 Controller 함수 호출
+            } else if (ch == 4) {
+                return;
             }
         }
     }
-    private boolean isSeatExist(ArrayList<SeatDto> seats, int rowcode, int colnum){
+    public void seatActivatingView(int store_no){
+        System.out.println("╔══════════════════════════════════════════════════╗");
+        System.out.println("║                  좌석 활성화/비활성화                 ║");
+        System.out.println("╚══════════════════════════════════════════════════╝");
+        System.out.println();
+        for(;;) {
+            ArrayList<SeatDto> seats = seatC.getSeats(store_no);
+            showSeatingChart(seats);
+            System.out.println("활성화/비활성화할 좌석의 좌표를 입력하세요 (예 : B-4)");
+            System.out.print("입력 (뒤로가기 : 0) > ");
+            String input = scan.next();
+            if(Objects.equals(input, "0")) { return; }
+            int result = seatC.toggleSeatStatus(store_no, input);
+            if (result == 0) {
+                System.out.println("실패");
+            } else if (result == 1) {
+                System.out.println("활성화 성공");
+            } else if (result == 2) {
+                System.out.println("비활성화 성공");
+            } else if (result == 3) {
+                System.out.println("적절하지 않은 좌표 코드 입력 (rowCode-colNum 꼴로 입력해야 함)");
+            }
+        }
+    }
+    private void showSeatingChart(ArrayList<SeatDto> seats){
+        System.out.println("================================");
+        System.out.println("            좌석 배치도");
+        System.out.println("================================");
+
+        // ===== 좌석 배치도 출력 =====
+        System.out.print("   ");
+        for (int column = 0; column < SeatPolicy.MAX_SEAT_COLUMN_COUNT; column++) { // A, B, C, ... (colCode 출력)
+            char colCode = (char) (column + 65);
+            System.out.print(colCode + "  ");
+        }
+        System.out.println();
+        for (int row = 1; row <= SeatPolicy.MAX_SEAT_ROW_COUNT; row++) {
+            System.out.print(row + "  "); //1, 2, 3, ... (rowNum 출력)
+            for(int column = 1; column <= SeatPolicy.MAX_SEAT_COLUMN_COUNT; column++){
+                if(isSeatExist(seats, column, row)){
+                    System.out.print("■  ");
+                }
+                else {
+                    System.out.print("□  ");
+                }
+            }
+            System.out.println();
+        }
+        System.out.println();
+        System.out.println("□ = 빈 공간   ■ = 좌석");
+        System.out.println();
+        System.out.println("================================");
+        System.out.println();
+        // ===== 좌석 배치도 출력 end =====
+    }
+    private boolean isSeatExist(ArrayList<SeatDto> seats, int colCode, int rowNum){
         for (SeatDto seat : seats) {
-            char code = (char) (rowcode + 64);
-            String row = Character.toString(code);
-            String column = Integer.toString(colnum);
-            if(seat.getRowCode().equals(row) && seat.getColNum().equals(column)){
+            char code = (char) (colCode + 64);
+            String column = Character.toString(code);
+            String row = Integer.toString(rowNum);
+            if(seat.getColCode().equals(column) && seat.getRowNum().equals(row)){
                 return true;
             }
         }
