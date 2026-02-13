@@ -17,12 +17,12 @@ public class AdminView {
     // [1] 싱글톤
     private AdminView(){}
     private static AdminView instance = new AdminView();
-    public static AdminView getInstance() {
-        return instance;
-    }
+    public static AdminView getInstance() {return instance;}
     Scanner scan=new Scanner(System.in);
     StoreController sc=StoreController.getInstance();
     SeatController seatC = SeatController.getInstance();
+    LocalDate now=LocalDate.now();
+    ArrayList<StoreDto> result=sc.getStores();
     public void index(){
         for(;;){
             try {
@@ -32,20 +32,26 @@ public class AdminView {
                         "║                환영합니다, %s님!                     ║\n" +
                         "╚══════════════════════════════════════════════════╝\n");
                 System.out.println("관리자: %s");
-                LocalDate now=LocalDate.now();
                 System.out.printf("오늘 날짜: %s\n",now);
                 System.out.println("\n" +
                         "========================================\n" +
                         "        관리할 매장을 선택하세요\n" +
-                        "========================================" +
-                        "\n");
+                        "========================================\n");
 
-                System.out.println("a.매장추가\nb.로그아웃\n");
+                int count=1;
+                for(StoreDto stores:result){
+                    System.out.println(count+". "+stores.getName());
+                    count++;
+                }
+                System.out.println("100.매장추가\n200.로그아웃\n");
                 System.out.print("선택>");
                 int ch=scan.nextInt();
-                if (ch == 1) {}//
-                else if (ch == 2) {addView();}
-                else if (ch == 3) {}
+                if (ch>=1&&ch<=result.size()) {
+                    StoreDto selectedStore=result.get(ch-1);
+                    Management(selectedStore);
+                }
+                else if (ch == 100) {addView();}
+                else if (ch == 200) {}
                 else {System.out.println("[경고]없는 기능 번호입니다.");}
             }catch (InputMismatchException i){
                 System.out.println("[경고]잘못된 입력 방식입니다.[재입력]");
@@ -95,6 +101,69 @@ public class AdminView {
         }else{
             System.out.println("[경고]잘못된 입력입니다.");
         }
+    }
+    public void Management(StoreDto selectedStore){
+        System.out.printf(
+                "╔══════════════════════════════════════════════════╗\n" +
+                "║           <%s 매장의>좌석 예약 시스템     ║\n" +
+                "║               관리자님 환영합니다!                  ║\n" +
+                "╚══════════════════════════════════════════════════╝\n\n",selectedStore.getName());
+        System.out.printf("\uD83D\uDCC5 오늘 날짜: %s\n",now);
+        System.out.println("\n========================================\n");
+        System.out.printf("\uD83D\uDCCB 매장명: %s\n" +"========================================\n\n",selectedStore.getName());
+        System.out.println("\uD83D\uDD39 매장 관리\n" +
+                "1. 매장 정보 관리\n" +
+                "2. 좌석 배치 관리\n" +
+                "3. 영업시간 설정(미정)\n" +
+                "\n" +
+                "\uD83D\uDD39 예약 관리\n" +
+                "4. 예약 내역 조회\n" +
+                "5. 예약 수동 등록 (미정)\n" +
+                "6. 취소/환불 처리 (미정)\n" +
+                "\n" +
+                "\uD83D\uDD39 설정\n" +
+                "7. 관리자 정보 수정 (미정)\n" +
+                "\n" +
+                "\uD83D\uDD39 기타\n" +
+                "8. 로그아웃\n" +
+                "\n" +
+                "선택 >> ");int ch=scan.nextInt();
+                switch (ch){
+                    case 1:
+                        StoreManagement(selectedStore);
+                    case 2:break;
+                    case 3:break;
+                    case 4:break;
+                }
+    }
+    public void StoreManagement (StoreDto selectedStore){
+        System.out.println(
+                "╔══════════════════════════════════════════════════╗\n" +
+                "║                  매장 정보 관리                    ║\n" +
+                "╚══════════════════════════════════════════════════╝");
+        System.out.printf("========================================\n현재 매장 정보\n========================================\n매장명: %s\n", selectedStore.getName());
+        System.out.printf("카테고리: %s\n\n", selectedStore.getCategory());
+        System.out.println("주소: 서울특별시 강남구 테헤란로 123, 2층\n" +
+                "연락처: 02-1234-5678\n" +
+                "이메일: admin@cafeonlview.com\n" +
+                "\n" +
+                "영업시간:\n" +
+                "  평일: 09:00 ~ 22:00\n" +
+                "  토요일: 10:00 ~ 22:00\n" +
+                "  일요일/공휴일: 10:00 ~ 20:00\n" +
+                "\n" +
+                "총 좌석: 48석\n" +
+                "운영 상태: \uD83D\uDFE2 정상 영업중\n" +
+                "\n" +
+                "등록일: 2026-02-09\n" +
+                "\n" +
+                "========================================\n" +
+                "\n" +
+                "1. 매장 수정\n" +
+                "2. 매장 삭제\n" +
+                "3. 뒤로 가기\n" +
+                "\n" +
+                "선택 >>");
     }
     /*
     public void writeView(){
