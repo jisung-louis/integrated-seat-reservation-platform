@@ -4,6 +4,7 @@ import constant.SeatPolicy;
 import model.dao.JdbcSeatDao;
 import model.dao.SeatDao;
 import model.dto.SeatDto;
+import util.CodeNumberConverter;
 
 import java.util.ArrayList;
 
@@ -26,7 +27,7 @@ public class SeatController {
         if (!colCode.matches("^[A-Z]+$")) { return 3; } // colCode가 영문자(대문자)로 이루어져있지 않으면
         if (!rowNum.matches("^[0-9]+$")) { return 3; } // rowNum이 숫자로 이루어져있지 않으면
         // [1-2] rowCode와 colNum이 최대값보다 같거나 작은지
-        int colNumber = convertColCodeToNumber(colCode);
+        int colNumber = CodeNumberConverter.convertColCodeToNumber(colCode);
         int rowNumber = Integer.parseInt(rowNum);
         if (colNumber > SeatPolicy.MAX_SEAT_COLUMN_COUNT) { return 3; }
         if (rowNumber > SeatPolicy.MAX_SEAT_ROW_COUNT) { return 3; }
@@ -49,13 +50,21 @@ public class SeatController {
         return sd.getSeats(store_no);
     }
 
-    private int convertColCodeToNumber(String colCode) {
-        int result = 0;
-
-        for (int i = 0; i < colCode.length(); i++) {
-            result = result * 26 + (colCode.charAt(i) - 'A' + 1);
+    public int activateAllSeat(int store_no){
+        int successCount = 0;
+        for (int row = 1; row <= SeatPolicy.MAX_SEAT_ROW_COUNT; row++) {
+            for (int column = 1; column <= SeatPolicy.MAX_SEAT_COLUMN_COUNT; column++) {
+                String rowNum = Integer.toString(row);
+                String colCode = CodeNumberConverter.convertNumberToColCode(column);
+                String seatCode = Integer.toString(store_no) + "-" + colCode + "-" + rowNum;
+                boolean result = sd.addSeat(seatCode);
+                if(result) { successCount++; }
+            } // 만약 잘 되다가 중간에 다오 실패(db 트랜잭션 실패)시 어쩌지?
         }
+        return successCount;
+    }
 
-        return result;
+    public int deactivateAllSeat(int store_no){
+        return sd.deleteSeatByStoreNo(store_no);
     }
 }

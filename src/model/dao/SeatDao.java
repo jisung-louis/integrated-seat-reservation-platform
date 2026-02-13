@@ -35,5 +35,12 @@ public interface SeatDao {
      */
     ArrayList<SeatDto> getSeats(int store_no);
 
+    /**
+     *
+     * @param store_no 매장 번호
+     * @return 삭제한 레코드 개수 반환
+     */
+    int deleteSeatByStoreNo(int store_no);
+
     boolean isSeatExist(String seatCode);
 }
