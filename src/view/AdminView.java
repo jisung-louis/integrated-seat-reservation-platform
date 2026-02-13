@@ -111,19 +111,11 @@ public class AdminView {
         System.out.printf("\uD83D\uDCC5 오늘 날짜: %s\n",now);
         System.out.println("\n========================================\n");
         System.out.printf("\uD83D\uDCCB 매장명: %s\n" +"========================================\n\n",selectedStore.getName());
-        System.out.println("\uD83D\uDD39 매장 관리\n" +
-                "1. 매장 정보 관리\n" +
-                "2. 좌석 배치 관리\n" +
-                "3. 영업시간 설정(미정)\n" +
-                "\n" +
+        System.out.println(
+                "\uD83D\uDD39 매장 관리\n" +
+                "1. 매장 정보 관리\n2. 좌석 배치 관리\n" +
                 "\uD83D\uDD39 예약 관리\n" +
-                "4. 예약 내역 조회\n" +
-                "5. 예약 수동 등록 (미정)\n" +
-                "6. 취소/환불 처리 (미정)\n" +
-                "\n" +
-                "\uD83D\uDD39 설정\n" +
-                "7. 관리자 정보 수정 (미정)\n" +
-                "\n" +
+                "3. 예약 내역 조회"+
                 "\uD83D\uDD39 기타\n" +
                 "8. 로그아웃\n" +
                 "\n" +
@@ -143,19 +135,16 @@ public class AdminView {
                 "╚══════════════════════════════════════════════════╝");
         System.out.printf("========================================\n현재 매장 정보\n========================================\n매장명: %s\n", selectedStore.getName());
         System.out.printf("카테고리: %s\n\n", selectedStore.getCategory());
-        System.out.println("주소: 서울특별시 강남구 테헤란로 123, 2층\n" +
-                "연락처: 02-1234-5678\n" +
-                "이메일: admin@cafeonlview.com\n" +
-                "\n" +
-                "영업시간:\n" +
-                "  평일: 09:00 ~ 22:00\n" +
-                "  토요일: 10:00 ~ 22:00\n" +
-                "  일요일/공휴일: 10:00 ~ 20:00\n" +
-                "\n" +
-                "총 좌석: 48석\n" +
-                "운영 상태: \uD83D\uDFE2 정상 영업중\n" +
-                "\n" +
-                "등록일: 2026-02-09\n" +
+        System.out.printf("주소: %s\n",selectedStore.getAddress());
+        System.out.printf("연락처: %s\n",selectedStore.getContact());
+        System.out.printf("이메일: admin@cafeonlview.com\n\n",selectedStore.getEmail());
+        System.out.printf("영업시간:\n 평일 : %s\n",selectedStore.getBh_weekdays());
+        System.out.printf("  토요일: %s\n",selectedStore.getBh_saturday());
+        System.out.printf("  일요일/공휴일: %s\n\n",selectedStore.getBh_sunday());
+        System.out.println("총 좌석: 48석\n" );     //아직
+        System.out.printf("운영 상태: \uD83D\uDFE2 %s\n\n",selectedStore.getStatus());
+        System.out.println(
+                "등록일: 2026-02-09\n" +   //아직
                 "\n" +
                 "========================================\n" +
                 "\n" +
@@ -163,7 +152,14 @@ public class AdminView {
                 "2. 매장 삭제\n" +
                 "3. 뒤로 가기\n" +
                 "\n" +
-                "선택 >>");
+                "선택 >>"); int ch=scan.nextInt();
+        switch (ch){
+            case 1:break;
+            case 2: break;
+            case 3:
+                Management(selectedStore);break;
+            default: break;
+        }
     }
     /*
     public void writeView(){
