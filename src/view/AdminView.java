@@ -154,13 +154,73 @@ public class AdminView {
                 "\n" +
                 "선택 >>"); int ch=scan.nextInt();
         switch (ch){
-            case 1:break;
+            case 1:
+                StoreUpdate(selectedStore);break;
             case 2: break;
             case 3:
                 Management(selectedStore);break;
             default: break;
         }
     }
+    // [3] 게시물 수정
+    public void StoreUpdate(StoreDto selectedStore){
+        System.out.printf(
+                "╔══════════════════════════════════════════════════╗\n" +
+                "║                    매장 정보 수정                  ║\n" +
+                "╚══════════════════════════════════════════════════╝\n\n" +
+                "매장: %s\n\n" +
+                "※ 매장명 변경은 고객센터 문의 필요\n" +
+                "========================================\n\n" +
+                "\uD83D\uDCDE 매장 연락처\n" +
+                "현재: %s\n" +
+                "변경: (변경 안하려면 Enter) >> 02-1234-99909\n" +
+                "✓ 변경됨\n" +
+                "\n" +
+                "\uD83D\uDCE7 이메일\n" +
+                "현재: admin@cafeonlview.com\n" +
+                "변경: (변경 안하려면 Enter) >> \n" +
+                "\n" +
+                "\uD83D\uDCCD 주소\n" +
+                "현재: 서울특별시 강남구 테헤란로 123, 2층\n" +
+                "변경: (변경 안하려면 Enter) >> 서울특별시 강남구 테헤란로 123, 3층\n" +
+                "✓ 변경됨\n" +
+                "\n" +
+                "\uD83C\uDFF7\uFE0F 매장 카테고리\n" +
+                "현재: 카페\n" +
+                "변경: 스터디카페\n" +
+                "선택: (변경 안하려면 Enter) >> \n" +
+                "✓ 변경됨\n" +
+                "\n" +
+                "\uD83D\uDFE2 운영 상태\n" +
+                "현재: 정상 영업중\n" +
+                "변경:\n" +
+                "  1. \uD83D\uDFE2 정상 영업중\n" +
+                "  2. \uD83D\uDFE1 예약 일시중단\n" +
+                "  3. \uD83D\uDD34 영업 중단\n" +
+                "선택: (변경 안하려면 Enter) >> \n" +
+                "\n" +
+                "========================================\n" +
+                "\n" +
+                "정말 저장하시겠습니까? (Y/N) >> Y\n" +
+                "\n" +
+                "✓ 매장 정보가 업데이트되었습니다!\n" +
+                "\n" +
+                "1. 계속 수정하기\n" +
+                "2. 매장 정보 관리로\n" +
+                "3. 뒤로 가기\n" +
+                "\n" +
+                "선택 >>",selectedStore.getName(),selectedStore.getContact());int ch=scan.nextInt();
+    }
+//    // 게시물 삭제
+//    public void StoreDelete(){
+//        System.out.print("삭제할 게시물 번호:"); int bno=sc.nextInt();
+//        boolean result=bc.delete(bno);
+//        if(result){
+//            System.out.println("[안내]삭제 성공");
+//        }else{
+//            System.out.println("[경고]삭제 실패");
+//        }
+//    }
     /*
     public void writeView(){
         sc.nextLine();
@@ -174,16 +234,7 @@ public class AdminView {
             System.out.println("[경고]실패");
         }
     }
-    // 게시물 삭제
-    public void delete(){
-        System.out.print("삭제할 게시물 번호:"); int bno=sc.nextInt();
-        boolean result=bc.delete(bno);
-        if(result){
-            System.out.println("[안내]삭제 성공");
-        }else{
-            System.out.println("[경고]삭제 실패");
-        }
-    }
+
     // [2] 게시물 전체 조회
     public void findAll(){
         ArrayList<BoardDto> boards=bc.findAll();
@@ -192,17 +243,6 @@ public class AdminView {
                     board.getBno(),board.getBwriter(),board.getBwriter(),board.getBcontent());
         }
     }
-    // [3] 게시물 수정
-    public void update(){
-        System.out.print("수정할 게시물번호:");int bno=sc.nextInt();sc.nextLine();
-        System.out.print("수정할 내용:"); String bcontent=sc.nextLine();
-        boolean result=bc.update(bno,bcontent);
-        if(result){
-            System.out.println("[안내]수정 성공");
-        }else{
-            System.out.println("[경고]수정 실패");
-        }
-    }*/
     /**
      *
      * @param store_no 매장 번호
