@@ -7,32 +7,26 @@ import java.util.ArrayList;
 public interface SeatDao {
     /**
      *
-     * @param store_no 매장 번호
-     * @param rowcode 가로 번호
-     * @param colnum 세로 번호
+     * @param seatCode 좌석 코드 (매장번호-colCode-rowNum)
      * @return 좌석 추가 성공 여부(true or false)
      */
-    boolean addSeats(int store_no, String rowcode, String colnum);
+    boolean addSeats(String seatCode);
     int AVAILABLE = 0;
     int RESERVED = 1;
     /**
      *
-     * @param store_no 매장 번호
-     * @param rowcode 가로 번호
-     * @param colnum 세로 번호
+     * @param seatCode 좌석 코드 (매장번호-colCode-rowNum)
      * @param status 변경할 예약 상태 (AVAILABLE / RESERVED)
      * @return 좌석 상태 성공 여부(true or false)
      */
-    boolean updateSeatStatus(int store_no, String rowcode, String colnum, int status);
+    boolean updateSeatStatus(String seatCode, int status);
 
     /**
      *
-     * @param store_no 매장 번호
-     * @param rowcode 가로 번호
-     * @param colnum 세로 번호
+     * @param seatCode 좌석 코드 (매장번호-colCode-rowNum)
      * @return 좌석 삭제 성공 여부(true or false)
      */
-    boolean deleteSeats(int store_no, String rowcode, String colnum);
+    boolean deleteSeats(String seatCode);
 
     /**
      *
@@ -40,4 +34,6 @@ public interface SeatDao {
      * @return 해당 매장의 좌석 정보 반환
      */
     ArrayList<SeatDto> getSeats(int store_no);
+
+    boolean isSeatExist(String seatCode);
 }
