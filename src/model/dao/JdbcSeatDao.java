@@ -82,6 +82,19 @@ public class JdbcSeatDao implements SeatDao {
     }
 
     @Override
+    public int deleteSeatByStoreNo(int store_no) {
+        try {
+            String sql = "delete from seat where store_no = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, store_no);
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("[시스템오류] SQL 문법 문제 발생 : " + e);
+        }
+        return 0;
+    }
+
+    @Override
     public boolean isSeatExist(String seatCode) {
         try {
             String sql = "select * from seat where code = ?";
