@@ -63,11 +63,11 @@ public class SeatChart {
             System.out.print(row + "  "); //1, 2, 3, ... (rowNum 출력)
             for(int column = 1; column <= SeatPolicy.MAX_SEAT_COLUMN_COUNT; column++){
                 if(row == rowNum && column == colNum){
-                    System.out.println("✅  ");
+                    System.out.print("✅  ");
                 }
                 else {
                     if (seatStatus(seats, column, row) == 2) { // 좌석 이미 예약됨
-                        System.out.println("■  ");
+                        System.out.print("■  ");
                     }
                     if (seatStatus(seats, column, row) == 1) { // 좌석 예약 가능
                         System.out.print("□  ");
@@ -107,7 +107,7 @@ public class SeatChart {
                 else if (seatStatus(seats, column, row) == 1) { // 예약 가능한 좌석
                     System.out.print("□  ");
                 } else { // 좌석 미존재 (seatStatus(seats,column,row) == 0)
-                    System.out.println("   ");
+                    System.out.print("   ");
                 }
             }
             System.out.println();
