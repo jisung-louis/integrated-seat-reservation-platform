@@ -8,11 +8,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class JdbcStoreDao implements StoreDao{
+public class JdbcStoreDao extends DBConnection implements StoreDao{
     // [0] 연동 인터페이스 선언
     private Connection conn;
     // [1] 싱글톤
-    private JdbcStoreDao(){ conn = DBConnection.connect(); }
+    private JdbcStoreDao(){ conn = connect(); }
     private static JdbcStoreDao instance = new JdbcStoreDao();
     public static JdbcStoreDao getInstance() {
         return instance;

@@ -11,9 +11,9 @@ public class DBConnection {
     public static final String password = "1234";
 
     /**
-     * 사용법 : Connection conn을 선언해두고, DAO의 싱글톤 객체 생성자에서 conn 변수에 DBConnection.connect()를 호출/대입하면 됩니다.
+     * 사용법 : Connection conn 변수에 connect() 대입
      */
-    public static Connection connect(){
+    public Connection connect(){
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             return DriverManager.getConnection(url,user,password);

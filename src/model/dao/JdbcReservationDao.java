@@ -8,14 +8,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class JdbcReservationDao implements ReservationDao {
+public class JdbcReservationDao extends DBConnection implements ReservationDao{
     private Connection conn;
     private PreparedStatement ps;
     private ResultSet rs;
 
     // [1] 싱글톤
     private JdbcReservationDao() {
-        DBConnection.connect();
+        conn = connect();
     }
 
     private static JdbcReservationDao instance = new JdbcReservationDao();

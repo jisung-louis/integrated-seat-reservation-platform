@@ -7,11 +7,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class JdbcUserDao implements UserDao{
+public class JdbcUserDao extends DBConnection implements UserDao{
     // [0] 연동 인터페이스 선언
     private Connection conn;
     // [1] 싱글톤
-    private JdbcUserDao(){ conn = DBConnection.connect(); }
+    private JdbcUserDao(){ conn = connect(); }
     private static JdbcUserDao instance = new JdbcUserDao();
     public static JdbcUserDao getInstance() {
         return instance;

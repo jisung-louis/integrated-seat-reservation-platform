@@ -8,11 +8,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class JdbcSeatDao implements SeatDao {
+public class JdbcSeatDao extends DBConnection implements SeatDao {
     // [0] 연동 인터페이스 선언
     Connection conn;
     // [1] 싱글톤
-    private JdbcSeatDao(){ conn = DBConnection.connect(); }
+    private JdbcSeatDao(){ conn = connect(); }
     private static JdbcSeatDao instance = new JdbcSeatDao();
     public static JdbcSeatDao getInstance() {
         return instance;
