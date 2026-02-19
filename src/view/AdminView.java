@@ -15,7 +15,6 @@ import model.dto.StoreDto;
 import model.dto.UserDto;
 
 public class AdminView {
-    // [1] 싱글톤
     private AdminView(){}
     private static AdminView instance = new AdminView();
     public static AdminView getInstance() {return instance;}
@@ -66,7 +65,7 @@ public class AdminView {
     public void addView(){
         System.out.println(
                 "╔══════════════════════════════════════════════════╗\n" +
-                "║                   매장 추가                       ║\n" +
+                "║                      매장 추가                    ║\n" +
                 "╚══════════════════════════════════════════════════╝\n" +
                 "\n" +
                 "새로운 매장 정보를 입력하세요.");
@@ -85,7 +84,6 @@ public class AdminView {
         System.out.print("⏰[평일] 영업시간: ");String bh_weekdays= scan.nextLine();
         System.out.print(" ⏰[토요일] 영업시간: ");String bh_saturday= scan.nextLine();
         System.out.print(" ⏰[일요일] 영업시간: ");String bh_sunday= scan.nextLine();
-
         System.out.println("\uD83D\uDFE2 운영 상태");
         System.out.println("1.정상 영업중");
         System.out.println("2.예약 일시 중단");
@@ -96,6 +94,7 @@ public class AdminView {
                             "이대로 매장을 추가하시겠습니까? (Y/N) >>");char add=scan.next().charAt(0);
         if(add=='Y'){
             sc.addStore(1,name,category,address,contact,email,bh_weekdays,bh_saturday,bh_sunday,status);
+            result=sc.getStores();
             System.out.println("✓ 매장이 등록되었습니다!\n매장 선택 화면으로 이동");
         }else if(add=='N'){
             System.out.println("매장등록을 취소하셨습니다");
@@ -117,7 +116,7 @@ public class AdminView {
                 "1. 매장 정보 관리\n" +
                 "2. 좌석 배치 관리\n" +
                 "\uD83D\uDD39 예약 관리\n" +
-                "3. 예약 내역 조회"+
+                "3. 예약 내역 조회\n"+
                 "\uD83D\uDD39 기타\n" +
                 "4. 로그아웃\n" +
                 "\n" +
@@ -164,7 +163,7 @@ public class AdminView {
             case 1:
                 StoreUpdate(selectedStore);break;
             case 2:
-                StoreDelete();break;
+                StoreDelete(selectedStore);break;
             case 3:
                 Management(selectedStore);break;
             default: break;
@@ -188,16 +187,16 @@ public class AdminView {
         System.out.printf("\n\uD83D\uDCE7 이메일\n" +
                 "현재: %s\n" +
                 "변경: (변경 안하려면 Enter) >> ",selectedStore.getEmail()); String email=scan.nextLine();
-        if (email.isEmpty()) contact = selectedStore.getEmail();
+        if (email.isEmpty()) email = selectedStore.getEmail();
         System.out.printf("\n\uD83D\uDCCD 주소\n" +
                 "현재: %s\n" +
                 "변경: (변경 안하려면 Enter) >> ",selectedStore.getAddress()); String adress=scan.nextLine();
-        if (adress.isEmpty()) contact = selectedStore.getAddress();
+        if (adress.isEmpty()) adress = selectedStore.getAddress();
         System.out.printf(
                 "\n\uD83C\uDFF7\uFE0F 매장 카테고리\n" +
                 "현재: %s\n" +
                 "변경: (변경 안하려면 Enter) >> ",selectedStore.getCategory());String category=scan.nextLine();
-        if (category.isEmpty()) contact = selectedStore.getCategory();
+        if (category.isEmpty()) category = selectedStore.getCategory();
         System.out.printf("\n⏰ 평일 영업시간\n현재: %s\n변경: >> ", selectedStore.getBh_weekdays());
         String bh_weekdays = scan.nextLine();
         if (bh_weekdays.isEmpty()) bh_weekdays = selectedStore.getBh_weekdays();
@@ -226,7 +225,7 @@ public class AdminView {
             String confirm = scan.nextLine();
             if (confirm.equals("Y")) {
                 boolean result=StoreController.getInstance().updateStore(
-                        selectedStore.getOwner_no(),
+                        selectedStore.getNo(),
                         selectedStore.getName(),
                         category,
                         adress,
@@ -265,28 +264,67 @@ public class AdminView {
             break;
         }
     }
-    public void StoreDelete(){
-    }
-    /*
-    public void writeView(){
-        sc.nextLine();
-        System.out.print("내용:");String content=sc.nextLine();
-        System.out.print("작성자:");String writer=sc.next();
-        boolean result=bc.write(content,writer);  // 컨트롤러에게 입력받은 content,writer 전달하여 결과 받아오기
-        // 받은 결과에 따른 화면 출력
-        if(result){
-            System.out.println("[안내]성공");
-        }else{
-            System.out.println("[경고]실패");
-        }
-    }
-
-    // [2] 게시물 전체 조회
-    public void findAll(){
-        ArrayList<BoardDto> boards=bc.findAll();
-        for(BoardDto board:boards){
-            System.out.printf("번호:%d, 작성일:%s, 작성자:%s, 내용:%s\n",
-                    board.getBno(),board.getBwriter(),board.getBwriter(),board.getBcontent());
+    public void StoreDelete(StoreDto selectedStore){
+        System.out.printf(
+                "╔══════════════════════════════════════════════════╗\n" +
+                "║                      매장 삭제                    ║\n" +
+                "╚══════════════════════════════════════════════════╝\n\n" +
+                "⚠\uFE0F  경고: 매장 삭제는 복구할 수 없습니다!\n\n"+
+                "========================================\n" +
+                "           삭제할 매장 정보\n" +
+                "========================================\n" +
+                "\n" +
+                "매장명: %s\n" +
+                "카테고리: %s\n" +
+                "주소: %s\n" +
+                "연락처: %s\n" +
+                "이메일: %s\n\n" +
+                "영업시간:\n" +
+                "  평일: %s\n" +
+                "  토요일: %s\n" +
+                "  일요일/공휴일: %s\n\n",selectedStore.getName(),selectedStore.getCategory(),selectedStore.getAddress(),
+                                selectedStore.getContact(),selectedStore.getEmail(),selectedStore.getBh_weekdays(),
+                                selectedStore.getBh_saturday(),selectedStore.getBh_sunday());
+        System.out.println("운영 상태: \uD83D\uDFE2 정상 영업중\n" +
+                "등록일: 미구현\n\n" +        // 미구현
+                "========================================\n\n" +
+                "⚠\uFE0F  매장 삭제 시 주의사항:\n" +
+                "- 모든 좌석 배치 정보가 삭제됩니다\n" +
+                "- 진행중인 예약이 있다면 자동 취소됩니다\n" +
+                "- 과거 예약 내역도 모두 삭제됩니다\n" +
+                "- 삭제 후 복구할 수 없습니다\n\n" +
+                "========================================\n");
+        for(;;) {
+            System.out.println("정말 저장하시겠습니까? (Y/N) >> ");
+            String confirm = scan.nextLine();
+            if (confirm.equals("Y")) {
+                boolean result=StoreController.getInstance().deleteStore(selectedStore.getNo());
+                System.out.println("\n✓ 매장 정보가 업데이트되었습니다!\n\n" +
+                        "1. 계속 수정하기\n" +
+                        "2. 매장 정보 관리로\n" +
+                        "3. 관리자 페이지로 이동\n\n" +
+                        "선택 >>");int ch=scan.nextInt();
+                switch (ch){
+                    case 1:
+                        StoreUpdate(selectedStore);
+                        break;
+                    case 2:
+                        StoreManagement(selectedStore);
+                        break;
+                    case 3:
+                        Management(selectedStore);
+                        break;
+                    default:
+                        break;
+                }
+            } else if (confirm.equals("N")) {
+                System.out.println("\n✕ 수정을 취소합니다. 이전 화면으로 돌아갑니다.\n\n");
+                StoreManagement(selectedStore);
+            }else{
+                System.out.println("[안내]저장을 실패하였습니다 Y/N로 입력해주세요");
+                continue;
+            }
+            break;
         }
     }
     /**

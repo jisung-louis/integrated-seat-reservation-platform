@@ -58,6 +58,8 @@ public class LoginView {
             if(user.isAdmin()){
                 // TODO : 관리자 메인화면으로
                 System.out.println("관리자 메인화면");
+                AdminView admin=AdminView.getInstance();
+                admin.index(user);
             }
             else {
                 // TODO : 사용자 메인화면으로
