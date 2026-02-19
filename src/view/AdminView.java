@@ -11,6 +11,7 @@ import java.util.InputMismatchException;
 import java.util.Objects;
 import java.util.Scanner;
 
+import controller.UserController;
 import model.dto.SeatDto;
 import model.dto.StoreDto;
 import model.dto.UserDto;
@@ -108,6 +109,7 @@ public class AdminView {
         }
     }
     public void managementView(StoreDto selectedStore){
+        UserDto user=new UserDto();
         for(;;) {
             System.out.printf(
                     "╔══════════════════════════════════════════════════╗\n" +
@@ -153,6 +155,7 @@ public class AdminView {
                 // TODO : 취소/환불 처리 뷰로 이동
             } else if (ch == 7) {
                 // TODO : 관리자 정보 수정 뷰로 이동
+                adminUpdate(user);
             } else if (ch == 8) {
                 // TODO : 뒤로가기
                 break;
@@ -160,6 +163,7 @@ public class AdminView {
         }
     }
     public void storeManagementView (StoreDto selectedStore){
+        int totalSeatCount=seatC.getSeats(selectedStore.getNo()).size();
         for(;;) {
             System.out.println(
                     "╔══════════════════════════════════════════════════╗\n" +
@@ -173,18 +177,16 @@ public class AdminView {
             System.out.printf("영업시간:\n 평일 : %s\n", selectedStore.getBh_weekdays());
             System.out.printf("  토요일: %s\n", selectedStore.getBh_saturday());
             System.out.printf("  일요일/공휴일: %s\n\n", selectedStore.getBh_sunday());
-            System.out.println("총 좌석: 미구현\n");     //아직
+            System.out.printf("총 좌석: %d\n",totalSeatCount);
             System.out.printf("운영 상태: \uD83D\uDFE2 %s\n\n", selectedStore.getStatus());
             System.out.print(
-                    "등록일: 미구현\n" +   //아직
-                            "\n" +
-                            "========================================\n" +
-                            "\n" +
-                            "1. 매장 수정\n" +
-                            "2. 매장 삭제\n" +
-                            "3. 뒤로 가기\n" +
-                            "\n" +
-                            "선택 >>");
+                    "========================================\n" +
+                    "\n" +
+                    "1. 매장 수정\n" +
+                    "2. 매장 삭제\n" +
+                    "3. 뒤로 가기\n" +
+                    "\n" +
+                    "선택 >>");
             int ch = scan.nextInt();
             if (ch == 1) {
                 storeUpdateView(selectedStore);
@@ -305,8 +307,7 @@ public class AdminView {
                 "  일요일/공휴일: %s\n\n",selectedStore.getName(),selectedStore.getCategory(),selectedStore.getAddress(),
                                 selectedStore.getContact(),selectedStore.getEmail(),selectedStore.getBh_weekdays(),
                                 selectedStore.getBh_saturday(),selectedStore.getBh_sunday());
-        System.out.println("운영 상태: \uD83D\uDFE2 정상 영업중\n" +
-                "등록일: 미구현\n\n" +        // 미구현
+        System.out.println("운영 상태: \uD83D\uDFE2 정상 영업중\n\n" +
                 "========================================\n\n" +
                 "⚠\uFE0F  매장 삭제 시 주의사항:\n" +
                 "- 모든 좌석 배치 정보가 삭제됩니다\n" +
@@ -337,6 +338,63 @@ public class AdminView {
                 continue;
             }
             break;
+        }
+    }
+    public void adminUpdate(UserDto adminUser){
+        UserDto admin=Session.getLoginUser();
+        System.out.printf(
+                "╔══════════════════════════════════════════════════╗\n" +
+                "║                  관리자 정보 수정                  ║\n" +
+                "╚══════════════════════════════════════════════════╝\n" +
+                "\n" +
+                "현재 로그인 계정: %s\n" +
+                "성함: %s\n" +
+                "\n" +
+                "========================================\n" +
+                "           본인 확인을 진행합니다\n" +
+                "========================================\n" +
+                "\n" +
+                "\uD83D\uDD11 현재 비밀번호 입력 >> ",admin.getId(),admin.getName());
+        scan.nextLine();
+        String password=scan.nextLine();
+        if(admin.getPassword().equals(password)){
+            System.out.println("[정보]로그인 확인 되었습니다.");
+            System.out.printf(
+                    "\n" +
+                    "========================================\n" +
+                    "           수정할 정보를 입력하세요\n" +
+                    "========================================\n" +
+                    "\n" +
+                    "\uD83D\uDC64 성함 변경 (현재: %s)\n" +
+                    "   >> (변경 안 하려면 Enter) ",admin.getName());String name=scan.nextLine();
+            if(name.isEmpty()){name=admin.getName();}
+            System.out.println("\n" +
+                    "\uD83D\uDD10 새 비밀번호 입력\n" +
+                    "   >> (변경 안 하려면 Enter) ");String newPassword=scan.nextLine();
+            if(newPassword.isEmpty()){newPassword=admin.getPassword();}
+            System.out.printf("\n" +
+                            "\uD83D\uDCF1 아이디 변경 (현재: %s)\n" +
+                            "   >> (변경 안 하려면 Enter) ",admin.getId());String newid=scan.nextLine();
+            if(newid.isEmpty()){newid=admin.getId();}
+            System.out.println(
+                    "\n========================================\n\n");
+            System.out.println("정말 수정한 정보로 저장하시겠습니까? (Y/N) >> ");String confrim=scan.nextLine();
+            if(confrim.equals("Y")){
+                admin.setId(newid);
+                admin.setName(name);
+                admin.setPassword(newPassword);
+                boolean result=UserController.getInstance().update(admin);
+                if(result){
+                    System.out.println("\n✓ 관리자 정보가 성공적으로 업데이트되었습니다!\n\n" +
+                        "1. 관리 메뉴로 돌아가기\n" +
+                        "2. 로그아웃\n\n" +
+                        "선택 >>");
+                }       // 이어서하기
+            } else if (confrim.equals("N")) {
+
+            }else{
+
+            }
         }
     }
     /**

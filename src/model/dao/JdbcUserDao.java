@@ -52,4 +52,20 @@ public class JdbcUserDao extends DBConnection implements UserDao{
         }
         return false;
     }
+
+    @Override
+    public boolean update(UserDto admin) {
+        try {
+            String sql = "UPDATE user SET id = ?, password = ?, name = ? WHERE no = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, admin.getId());
+            ps.setString(2, admin.getPassword());
+            ps.setString(3, admin.getName());
+            ps.setInt(4, admin.getNo());
+            return ps.executeUpdate()==1;
+        } catch (Exception e) {
+            System.out.println("[DB 오류] 관리자 정보 수정 실패: " + e.getMessage());
+        }
+        return false;
+    }
 }
