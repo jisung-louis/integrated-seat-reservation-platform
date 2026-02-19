@@ -198,6 +198,17 @@ public class AdminView {
                 "현재: %s\n" +
                 "변경: (변경 안하려면 Enter) >> ",selectedStore.getCategory());String category=scan.nextLine();
         if (category.isEmpty()) contact = selectedStore.getCategory();
+        System.out.printf("\n⏰ 평일 영업시간\n현재: %s\n변경: >> ", selectedStore.getBh_weekdays());
+        String bh_weekdays = scan.nextLine();
+        if (bh_weekdays.isEmpty()) bh_weekdays = selectedStore.getBh_weekdays();
+
+        System.out.printf("⏰ 토요일 영업시간\n현재: %s\n변경: >> ", selectedStore.getBh_saturday());
+        String bh_saturday = scan.nextLine();
+        if (bh_saturday.isEmpty()) bh_saturday = selectedStore.getBh_saturday();
+
+        System.out.printf("⏰ 일요일/공휴일 영업시간\n현재: %s\n변경: >> ", selectedStore.getBh_sunday());
+        String bh_sunday = scan.nextLine();
+        if (bh_sunday.isEmpty()) bh_sunday = selectedStore.getBh_sunday();
         String status = (selectedStore.getStatus() == 1) ? "정상 영업중" :
                 (selectedStore.getStatus() == 2) ? "예약 일시중단" :
                         (selectedStore.getStatus() == 3) ? "영업 중단" : "오류";
@@ -209,42 +220,49 @@ public class AdminView {
                 "  3. \uD83D\uDD34 영업 중단\n" +
                 "선택: (변경 안하려면 Enter) >> ",status);String chInput = scan.nextLine();
         int newStatus= chInput.isEmpty() ? selectedStore.getStatus() : Integer.parseInt(chInput);
-        System.out.println("\n\n========================================\n\n" +
-                "정말 저장하시겠습니까? (Y/N) >> ");String confirm=scan.nextLine();
-        if (confirm.equals("Y")) {
-            boolean result=StoreController.getInstance().updateStore(
-                    selectedStore.getOwner_no(),
-                    selectedStore.getName(),
-                    category,
-                    adress,
-                    contact,
-                    email,
-                    selectedStore.getBh_weekdays(), // 미구현 ~
-                    selectedStore.getBh_saturday(),
-                    selectedStore.getBh_sunday(),   // ~ 까지 영업시간 아직 미구현
-                    newStatus
-            );
-            System.out.println("\n✓ 매장 정보가 업데이트되었습니다!\n\n" +
-                    "1. 계속 수정하기\n" +
-                    "2. 매장 정보 관리로\n" +
-                    "3. 관리자 페이지로 이동\n\n" +
-                    "선택 >>");int ch=scan.nextInt();
-            switch (ch){
-                case 1:
-                    StoreUpdate(selectedStore);
-                    break;
-                case 2:
-                    StoreManagement(selectedStore);
-                    break;
-                case 3:
-                    Management(selectedStore);
-                    break;
-                default:
-                    break;
+        for(;;) {
+            System.out.println("\n\n========================================\n\n" +
+                    "정말 저장하시겠습니까? (Y/N) >> ");
+            String confirm = scan.nextLine();
+            if (confirm.equals("Y")) {
+                boolean result=StoreController.getInstance().updateStore(
+                        selectedStore.getOwner_no(),
+                        selectedStore.getName(),
+                        category,
+                        adress,
+                        contact,
+                        email,
+                        bh_weekdays,
+                        bh_saturday,
+                        bh_sunday,
+                        newStatus
+                );
+                System.out.println("\n✓ 매장 정보가 업데이트되었습니다!\n\n" +
+                        "1. 계속 수정하기\n" +
+                        "2. 매장 정보 관리로\n" +
+                        "3. 관리자 페이지로 이동\n\n" +
+                        "선택 >>");int ch=scan.nextInt();
+                switch (ch){
+                    case 1:
+                        StoreUpdate(selectedStore);
+                        break;
+                    case 2:
+                        StoreManagement(selectedStore);
+                        break;
+                    case 3:
+                        Management(selectedStore);
+                        break;
+                    default:
+                        break;
+                }
+            } else if (confirm.equals("N")) {
+                System.out.println("\n✕ 수정을 취소합니다. 이전 화면으로 돌아갑니다.\n\n");
+                StoreManagement(selectedStore);
+            }else{
+                System.out.println("[안내]저장을 실패하였습니다 Y/N로 입력해주세요");
+                continue;
             }
-        } else if (confirm.equals("N")) {
-            System.out.println("\n✕ 수정을 취소합니다. 이전 화면으로 돌아갑니다.\n\n");
-            StoreManagement(selectedStore);
+            break;
         }
     }
     public void StoreDelete(){
