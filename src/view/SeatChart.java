@@ -66,10 +66,10 @@ public class SeatChart {
                     System.out.print("✅  ");
                 }
                 else {
-                    if (seatStatus(seats, column, row) == 2) { // 좌석 이미 예약됨
+                    int status = seatStatus(seats, column, row);
+                    if (status == 2) { // 좌석 이미 예약됨
                         System.out.print("■  ");
-                    }
-                    if (seatStatus(seats, column, row) == 1) { // 좌석 예약 가능
+                    } else if (status == 1) { // 좌석 예약 가능
                         System.out.print("□  ");
                     } else { // 좌석 미존재 (seatStatus(seats,column,row) == 0)
                         System.out.print("   ");
