@@ -42,7 +42,15 @@ public class JdbcSeatDao extends DBConnection implements SeatDao {
 
     @Override
     public boolean updateSeatStatus(String seatCode, int status) {
-        // TODO : updateSeatStatus 구현
+        try {
+            String sql = "update seat set status = ? where code = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1,status);
+            ps.setString(2, seatCode);
+            return ps.executeUpdate() == 1;
+        } catch (SQLException e) {
+            System.out.println("[시스템오류] SQL 문법 문제 발생 : " + e);
+        }
         return false;
     }
 
