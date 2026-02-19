@@ -57,13 +57,12 @@ public class LoginView {
         else {
             System.out.println("✓ 로그인 성공!");
             if(currentUser.isAdmin()){
-                System.out.println("관리자 메인화면");
-                AdminView admin = AdminView.getInstance();
-                admin.index(currentUser);
+                AdminView adminView = AdminView.getInstance();
+                adminView.index(currentUser);
             }
             else {
-                // TODO : 사용자 메인화면으로
-                System.out.println("사용자 메인화면");
+                UserView userView = UserView.getInstance();
+                userView.index();
             }
         }
     }
