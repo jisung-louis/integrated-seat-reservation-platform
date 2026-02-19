@@ -430,7 +430,7 @@ public class AdminView {
 
             // [C 담당자 영역] 좌석 배치도 출력
             ArrayList<SeatDto> seats = seatC.getSeats(store_no);
-            SeatChart.showSeatingChartForReservationManagement(seats);
+            SeatChart.showSeatingChartForReservationManagement(seats, storeName);
 
             // [B 담당자 영역] 예약 목록 출력
             ReservationController.getInstance().getStoreReservations(store_no);
