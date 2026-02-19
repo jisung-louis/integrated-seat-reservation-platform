@@ -9,9 +9,11 @@ import java.util.ArrayList;
 public class SeatChart {
     private SeatChart(){} // 인스턴스 생성 방지
     public static void showSeatingChartForSeatManagement(ArrayList<SeatDto> seats){
-        System.out.println("================================");
-        System.out.println("            좌석 배치도");
-        System.out.println("================================");
+        System.out.println("""
+                    ================================================
+                                        좌석 배치도
+                    ================================================
+                    """);
 
         // ===== 좌석 배치도 출력 =====
         System.out.print("   ");
@@ -42,15 +44,17 @@ public class SeatChart {
     /**
      *
      * @param seats 좌석 객체 목록
-     * @param reservedSeatCode 예약된 좌석 코드(강조할 좌석 코드)
+     * @param reservedRawSeatCode 예약된 좌석 코드(강조할 좌석 코드)
      */
-    public static void showSeatingChartForUser(ArrayList<SeatDto> seats, String reservedSeatCode){
-        String[] parts = reservedSeatCode.split("-");
+    public static void showSeatingChartForUser(ArrayList<SeatDto> seats, String reservedRawSeatCode, String storeName){
+        String[] parts = reservedRawSeatCode.split("-");
         int colNum = CodeNumberConverter.convertColCodeToNumber(parts[0]);
         int rowNum = Integer.parseInt(parts[1]);
-        System.out.println("================================");
-        System.out.println("            좌석 배치도");
-        System.out.println("================================");
+        System.out.printf("""
+                    ================================================
+                                <%s> 좌석 배치도
+                    ================================================
+                    \n""", storeName);
 
         // ===== 좌석 배치도 출력 =====
         System.out.print("   ");
@@ -63,7 +67,7 @@ public class SeatChart {
             System.out.print(row + "  "); //1, 2, 3, ... (rowNum 출력)
             for(int column = 1; column <= SeatPolicy.MAX_SEAT_COLUMN_COUNT; column++){
                 if(row == rowNum && column == colNum){
-                    System.out.print("✅  ");
+                    System.out.print("✅ ");
                 }
                 else {
                     int status = seatStatus(seats, column, row);
@@ -86,10 +90,12 @@ public class SeatChart {
         // ===== 좌석 배치도 출력 end =====
     }
 
-    public static void showSeatingChartForReservationManagement(ArrayList<SeatDto> seats){
-        System.out.println("================================");
-        System.out.println("            좌석 배치도");
-        System.out.println("================================");
+    public static void showSeatingChartForReservationManagement(ArrayList<SeatDto> seats, String storeName){
+        System.out.printf("""
+                    ================================================
+                                <%s> 좌석 배치도
+                    ================================================
+                    \n""", storeName);
 
         // ===== 좌석 배치도 출력 =====
         System.out.print("   ");
