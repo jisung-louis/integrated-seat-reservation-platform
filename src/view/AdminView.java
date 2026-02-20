@@ -154,7 +154,7 @@ public class AdminView {
                 // TODO : 취소/환불 처리 뷰로 이동
             } else if (ch == 7) {
                 // TODO : 관리자 정보 수정 뷰로 이동
-                adminUpdate(user);
+                adminUpdate();
             } else if (ch == 8) {
                 // TODO : 뒤로가기
                 break;
@@ -319,7 +319,7 @@ public class AdminView {
             scan.nextLine();
             String confirm = scan.nextLine();
             if (confirm.equals("Y")) {
-                boolean result=StoreController.getInstance().deleteStore(selectedStore.getNo());
+                boolean result=StoreController.getInstance().deleteStore(selectedStore.getNo());    // 매장삭제
                 System.out.println("\n✓ 매장 정보가 삭제되었습니다!\n\n" +
                         "1. 계속 수정하기\n" +
                         "2. 뒤로가기\n\n" +
@@ -340,7 +340,7 @@ public class AdminView {
             break;
         }
     }
-    public void adminUpdate(UserDto adminUser){
+    public void adminUpdate(){
         UserDto admin=Session.getLoginUser();
         System.out.printf(
                 "╔══════════════════════════════════════════════════╗\n" +
@@ -353,56 +353,66 @@ public class AdminView {
                 "========================================\n" +
                 "           본인 확인을 진행합니다\n" +
                 "========================================\n" +
-                "\n" +
-                "\uD83D\uDD11 현재 비밀번호 입력 >> ",admin.getId(),admin.getName());
+                "\n",admin.getId(),admin.getName());
         scan.nextLine();
-        String password=scan.nextLine();
-        if(admin.getPassword().equals(password)){
-            System.out.println("[정보]로그인 확인 되었습니다.");
-            System.out.printf(
-                    "\n" +
-                    "========================================\n" +
-                    "           수정할 정보를 입력하세요\n" +
-                    "========================================\n" +
-                    "\n" +
-                    "\uD83D\uDC64 성함 변경 (현재: %s)\n" +
-                    "   >> (변경 안 하려면 Enter) ",admin.getName());String name=scan.nextLine();
-            if(name.isEmpty()){name=admin.getName();}
-            System.out.println("\n" +
-                    "\uD83D\uDD10 새 비밀번호 입력\n" +
-                    "   >> (변경 안 하려면 Enter) ");String newPassword=scan.nextLine();
-            if(newPassword.isEmpty()){newPassword=admin.getPassword();}
-            System.out.printf("\n" +
-                            "\uD83D\uDCF1 아이디 변경 (현재: %s)\n" +
-                            "   >> (변경 안 하려면 Enter) ",admin.getId());String newid=scan.nextLine();
-            if(newid.isEmpty()){newid=admin.getId();}
-            System.out.println(
-                    "\n========================================\n\n");
-            for(;;) {
-                System.out.println("정말 수정한 정보로 저장하시겠습니까? (Y/N) >> ");String confrim=scan.nextLine();
-                if (confrim.equals("Y")) {
-                    admin.setId(newid);
-                    admin.setName(name);
-                    admin.setPassword(newPassword);
-                    boolean result = UserController.getInstance().update(admin);
-                    if (result) {
-                        System.out.println("\n✓ 관리자 정보가 성공적으로 업데이트되었습니다!\n\n" +
-                                "1. 관리 메뉴로 돌아가기\n" +
-                                "2. 로그아웃\n\n" +
-                                "선택 >>");
-                        int ch = scan.nextInt();
-                        if (ch == 1) {break;}
-                        else if (ch == 2) {/*LoginView()*/}
-                        else {}//while문 써야할듯?
-                    }else{
-                        System.out.println("[오류]관리자 정보 수정을 실패하였습니다.백엔드문제");
-                    }
-                } else if (confrim.equals("N")) {
-                    System.out.println("\n✕ 수정을 취소합니다. 이전 화면으로 돌아갑니다.\n\n");
-                } else {
-                    System.out.println("[안내]저장을 실패하였습니다 Y/N로 입력해주세요");
-                    break;
+        for(;;) {
+            System.out.println("\uD83D\uDD11 현재 비밀번호 입력 >> ");
+            String password = scan.nextLine();
+            if (admin.getPassword().equals(password)) {
+                System.out.println("[정보]로그인 확인 되었습니다.");
+                System.out.printf(
+                        "\n" +
+                                "========================================\n" +
+                                "           수정할 정보를 입력하세요\n" +
+                                "========================================\n" +
+                                "\n" +
+                                "\uD83D\uDC64 성함 변경 (현재: %s)\n" +
+                                "   >> (변경 안 하려면 Enter) ", admin.getName());
+                String name = scan.nextLine();
+                if (name.isEmpty()) {
+                    name = admin.getName();
                 }
+                System.out.println("\n" +
+                        "\uD83D\uDD10 새 비밀번호 입력\n" +
+                        "   >> (변경 안 하려면 Enter) ");
+                String newPassword = scan.nextLine();
+                if (newPassword.isEmpty()) {
+                    newPassword = admin.getPassword();
+                }
+                System.out.printf("\n" +
+                        "\uD83D\uDCF1 아이디 변경 (현재: %s)\n" +
+                        "   >> (변경 안 하려면 Enter) ", admin.getId());
+                String newid = scan.nextLine();
+                if (newid.isEmpty()) {
+                    newid = admin.getId();
+                }
+                System.out.println(
+                        "\n========================================\n\n");
+                for (; ; ) {
+                    System.out.println("정말 수정한 정보로 저장하시겠습니까? (Y/N) >> ");
+                    String confrim = scan.nextLine();
+                    if (confrim.equals("Y")) {
+                        admin.setId(newid);
+                        admin.setName(name);
+                        admin.setPassword(newPassword);
+                        boolean result = UserController.getInstance().update(admin);
+                        if (result) {
+                            System.out.println("\n✓ 관리자 정보가 성공적으로 업데이트되었습니다!\n\n");
+                            break;
+                        } else {
+                            System.out.println("[오류]관리자 정보 수정을 실패하였습니다.백엔드문제");
+                        }
+                    } else if (confrim.equals("N")) {
+                        System.out.println("\n✕ 수정을 취소합니다. 이전 화면으로 돌아갑니다.\n\n");
+                        break;
+                    } else {
+                        System.out.println("[안내]저장을 실패하였습니다 Y/N로 입력해주세요");
+                    }
+                }
+                break;
+            } else {
+                System.out.println("다시 입력해주세요.");
+                continue;
             }
         }
     }
