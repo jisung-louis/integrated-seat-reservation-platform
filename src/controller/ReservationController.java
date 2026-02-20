@@ -66,31 +66,43 @@ public class ReservationController {
     // [3] 예약 취소
     public boolean deleteReservation(int user_no, int store_no, String seatCode) {
         if (reservationDao.deleteReservation(user_no, seatCode)) {
-            return seatDao.updateSeatStatus(seatCode, 0); 
+            return seatDao.updateSeatStatus(seatCode, 0);
         }
+        // TODO : 둘 중 하나라도 실패시 롤백하는 로직 있어야 함. (예 : result1 성공했지만 result2 실패 시 해당 예약 deleteReservation DAO 호출)
         return false;
     }
 
     // [4] 예약 변경
-    public int updateReservation(int user_no, int store_no, String oldCode, String newCode) {
+    public int updateReservation(int user_no, int store_no, String oldRawCode, String newRawCode) {
         ArrayList<SeatDto> seats = seatDao.getSeats(store_no);
         SeatDto target = null;
+
+        String oldCode = store_no + "-" + oldRawCode;
+        String newCode = store_no + "-" + newRawCode;
+
         for (SeatDto s : seats) {
-            if (s.getCode().equals(newCode)) {
+            String fullSeatCode = s.getCode(); // "1-A-3"
+            String[] parts = fullSeatCode.split("-", 2);
+            String rawSeatCode = parts[1]; // "A-3"
+
+            if (rawSeatCode.equals(newRawCode)) {
                 target = s;
                 break;
             }
         }
+        System.out.println(target);
         if (target == null || target.getStatus() != 0) {
             return 1; // 대상 좌석 불가능
         }
-
         if (reservationDao.updateReservation(user_no, oldCode, newCode)) {
             seatDao.updateSeatStatus(oldCode, 0); 
             seatDao.updateSeatStatus(newCode, 1);
             return 0; // 성공
         }
         return 2; // DB 오류
+    }
+    public ReservationDto getReservationByNo(int reservationNo){
+        return reservationDao.getReservationByNo(reservationNo);
     }
 }
 
