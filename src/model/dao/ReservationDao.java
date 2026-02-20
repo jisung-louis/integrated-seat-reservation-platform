@@ -37,4 +37,5 @@ public interface ReservationDao {
      */
     ArrayList<ReservationDto> getReservationsByStoreNo(int store_no);
     ArrayList<ReservationDto> getReservationsByUserNo(int user_no);
+    ReservationDto getReservationByNo(int reservationNo);
 }

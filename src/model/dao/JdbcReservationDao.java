@@ -128,4 +128,24 @@ public class JdbcReservationDao extends DBConnection implements ReservationDao{
         } catch (SQLException e) { e.printStackTrace(); }
         return list;
     }
+
+    @Override
+    public ReservationDto getReservationByNo(int reservationNo) {
+        String sql = "select * from reservation where no = ?";
+        try {
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, reservationNo);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int no = rs.getInt("no");
+                int user_no = rs.getInt("user_no");
+                String seatCode = rs.getString("seat_code");
+                String reservedAt = rs.getDate("reservedAt").toString();
+                return new ReservationDto(no, user_no, seatCode, reservedAt);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
 }
