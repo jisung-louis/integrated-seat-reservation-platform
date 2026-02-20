@@ -20,9 +20,14 @@ public class ReservationController {
     private ReservationDao reservationDao = JdbcReservationDao.getInstance();
     private SeatDao seatDao = JdbcSeatDao.getInstance();
 
-    // [1] 특정 매장 예약 내역 조회 (데이터 반환형)
+    // [1-1] 특정 매장 예약 내역 조회 (관리자용)
     public ArrayList<ReservationDto> getStoreReservations(int store_no) {
         return reservationDao.getReservationsByStoreNo(store_no);
+    }
+
+    // [1-2] 특정 유저의 전체 예약 내역 조회 (사용자용)
+    public ArrayList<ReservationDto> getStoreReservationsByUserNo(int user_no) {
+        return reservationDao.getReservationsByUserNo(user_no);
     }
 
     // [2] 특정 매장의 특정 좌석 예약하기
