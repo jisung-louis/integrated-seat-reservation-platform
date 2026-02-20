@@ -45,6 +45,7 @@ public class SeatChart {
      *
      * @param seats 좌석 객체 목록
      * @param reservedRawSeatCode 예약된 좌석 코드(강조할 좌석 코드)
+     * @param storeName 매장명
      */
     public static void showSeatingChartForUser(ArrayList<SeatDto> seats, String reservedRawSeatCode, String storeName){
         String[] parts = reservedRawSeatCode.split("-");
