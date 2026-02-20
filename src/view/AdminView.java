@@ -294,18 +294,13 @@ public class AdminView {
                 "- 삭제 후 복구할 수 없습니다\n\n" +
                 "========================================\n");
         for(;;) {
-            System.out.println("정말 매장 정보를 삭제하시겠습니까? (Y/N) >> ");
+            System.out.print("정말 매장 정보를 삭제하시겠습니까? (Y/N) >> ");
             String confirm = scan.nextLine();
             if (confirm.equals("Y")) {
-                boolean result=StoreController.getInstance().deleteStore(selectedStore.getNo());    // 매장삭제
-                System.out.println("\n✓ 매장 정보가 삭제되었습니다!\n\n" +
-                        "1. 계속 수정하기\n" +
-                        "2. 뒤로가기\n\n" +
-                        "선택 >>");String input=scan.nextLine();
-                if(input.equals("1")){}
-                else if(input.equals("2")){break;}
-                else if(input.isEmpty()){System.out.print("[오류]아무것도 입력하지 않으셨습니다.다시 입력해주세요.");}
-                else{System.out.println("[오류]잘못된 입력입니다.");}
+                // 매장삭제 안됨 DB에는 저장되지만 실제로 테스트할땐 살아있고 매장을 추가할때 제품번호는 늘어나지만 삭제한 뒤 제품번호가 최신화 안됨
+                boolean result=StoreController.getInstance().deleteStore(selectedStore.getNo());
+                System.out.println("\n✓ 매장 정보가 삭제되었습니다!\n");
+                break;
             } else if (confirm.equals("N")) {
                 System.out.println("\n✕ 매장 정보 삭제를 취소합니다. 이전 화면으로 돌아갑니다.\n\n");
                 break;
