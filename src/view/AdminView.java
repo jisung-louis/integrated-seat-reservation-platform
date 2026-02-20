@@ -25,7 +25,6 @@ public class AdminView {
     StoreController sc = StoreController.getInstance();
     SeatController seatC = SeatController.getInstance();
     LocalDate now = LocalDate.now();
-    ArrayList<StoreDto> result = sc.getStores();
     public void index(UserDto user){
         for(;;){
             try {
@@ -42,6 +41,7 @@ public class AdminView {
                         "========================================\n");
 
                 int count = 1;
+                ArrayList<StoreDto> result = sc.getMyStores(user.getNo());
                 for(StoreDto stores:result){
                     System.out.println(count+". "+stores.getName());
                     count++;
@@ -99,8 +99,7 @@ public class AdminView {
         System.out.println("========================================\n" +
                             "이대로 매장을 추가하시겠습니까? (Y/N) >>");char add=scan.next().charAt(0);
         if(add == 'Y'){
-            sc.addStore(1,name,category,address,contact,email,bh_weekdays,bh_saturday,bh_sunday,status);
-            result=sc.getStores();
+            sc.addStore(Session.loginUser.getNo(), name,category,address,contact,email,bh_weekdays,bh_saturday,bh_sunday,status);
             System.out.println("✓ 매장이 등록되었습니다!\n매장 선택 화면으로 이동");
         }else if(add == 'N'){
             System.out.println("매장등록을 취소하셨습니다");
@@ -331,7 +330,7 @@ public class AdminView {
                     break;
                 }
             } else if (confirm.equals("N")) {
-                System.out.println("\n✕ 수정을 취소합니다. 이전 화면으로 돌아갑니다.\n\n");
+                System.out.println("\n✕ 매장 정보 삭제를 취소합니다. 이전 화면으로 돌아갑니다.\n\n");
                 break;
             }else{
                 System.out.println("[안내]저장을 실패하였습니다 Y/N로 입력해주세요");
@@ -378,22 +377,31 @@ public class AdminView {
             if(newid.isEmpty()){newid=admin.getId();}
             System.out.println(
                     "\n========================================\n\n");
-            System.out.println("정말 수정한 정보로 저장하시겠습니까? (Y/N) >> ");String confrim=scan.nextLine();
-            if(confrim.equals("Y")){
-                admin.setId(newid);
-                admin.setName(name);
-                admin.setPassword(newPassword);
-                boolean result=UserController.getInstance().update(admin);
-                if(result){
-                    System.out.println("\n✓ 관리자 정보가 성공적으로 업데이트되었습니다!\n\n" +
-                        "1. 관리 메뉴로 돌아가기\n" +
-                        "2. 로그아웃\n\n" +
-                        "선택 >>");
-                }       // 이어서하기
-            } else if (confrim.equals("N")) {
-
-            }else{
-
+            for(;;) {
+                System.out.println("정말 수정한 정보로 저장하시겠습니까? (Y/N) >> ");String confrim=scan.nextLine();
+                if (confrim.equals("Y")) {
+                    admin.setId(newid);
+                    admin.setName(name);
+                    admin.setPassword(newPassword);
+                    boolean result = UserController.getInstance().update(admin);
+                    if (result) {
+                        System.out.println("\n✓ 관리자 정보가 성공적으로 업데이트되었습니다!\n\n" +
+                                "1. 관리 메뉴로 돌아가기\n" +
+                                "2. 로그아웃\n\n" +
+                                "선택 >>");
+                        int ch = scan.nextInt();
+                        if (ch == 1) {break;}
+                        else if (ch == 2) {/*LoginView()*/}
+                        else {}//while문 써야할듯?
+                    }else{
+                        System.out.println("[오류]관리자 정보 수정을 실패하였습니다.백엔드문제");
+                    }
+                } else if (confrim.equals("N")) {
+                    System.out.println("\n✕ 수정을 취소합니다. 이전 화면으로 돌아갑니다.\n\n");
+                } else {
+                    System.out.println("[안내]저장을 실패하였습니다 Y/N로 입력해주세요");
+                    break;
+                }
             }
         }
     }
