@@ -316,6 +316,7 @@ public class AdminView {
                 "========================================\n");
         for(;;) {
             System.out.println("정말 저장하시겠습니까? (Y/N) >> ");
+            scan.nextLine();
             String confirm = scan.nextLine();
             if (confirm.equals("Y")) {
                 boolean result=StoreController.getInstance().deleteStore(selectedStore.getNo());
