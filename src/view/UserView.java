@@ -3,6 +3,7 @@ package view;
 import controller.ReservationController;
 import controller.SeatController;
 import controller.StoreController;
+import model.dto.ReservationDto;
 import model.dto.SeatDto;
 import model.dto.StoreDto;
 import model.dto.UserDto;
@@ -91,6 +92,7 @@ public class UserView {
                     ================================================
                                         매장 리스트
                     ================================================
+                    
                     """);
             stores.forEach(store -> {
                 System.out.printf("| %d | %s |\n", store.getNo(), store.getName());
@@ -107,7 +109,48 @@ public class UserView {
         }
     }
     public void myReservationListView(){
+        for(;;){
+            // STATUS
+            UserDto currentUser = Session.getLoginUser();
+            int userNo = currentUser.getNo();
+            ArrayList<ReservationDto> reservationList = reservationController.getStoreReservationsByUserNo(userNo);
+            System.out.printf("""
+                    ╔══════════════════════════════════════════════════╗
+                    ║                좌석 예약 시스템 - 사용자               ║
+                    ║                 환영합니다, %s님!                 ║
+                    ╚══════════════════════════════════════════════════╝
+                    \n""", currentUser.getName());
+            System.out.printf("오늘 날짜: %s\n", LocalDateTime.now());
+            System.out.println();
+            System.out.println("""
+                    ================================================
+                                        내 예약 목록
+                    ================================================
+                    
+                    """);
+            reservationList.forEach((reservation) -> {
+                String fullSeatCode = reservation.getSeat_code(); // "12-B-4" 꼴
+                String[] splitSeatCode = fullSeatCode.split("-",2);
+                int storeNo = Integer.parseInt(splitSeatCode[0]);
 
+                int no = reservation.getNo();
+                String storeName = storeController.getStore(storeNo).getName();
+                String rawSeatCode = splitSeatCode[1];
+                String reservedAt = reservation.getReservedAt();
+                System.out.printf("| %d | %s | %s 좌석 예약 완료 | %s에 예약함\n",no, storeName, rawSeatCode, reservedAt);
+            });
+            System.out.println();
+            System.out.println("자세한 좌석 위치를 확인하거나");
+            System.out.println("좌석 변경/취소하고 싶은 예약 번호를 입력하세요(뒤로가기 : 0)");
+            System.out.print("입력 > ");
+            int reservationNo = scan.nextInt();
+            if( reservationNo == 0 ){
+                break;
+            }
+            else{
+                reservationDetailView(reservationNo);
+            }
+        }
     }
     public void reservationView(int store_no){
         for(;;) {
@@ -188,6 +231,77 @@ public class UserView {
         }
         else{ // 다른 숫자를 입력해도 홈으로 이동
             return 2;
+        }
+    }
+
+    public void reservationDetailView(int reservationNo){
+        UserDto currentUser = Session.getLoginUser();
+        ReservationDto reservation = reservationController.getReservationByNo(reservationNo);
+        String fullSeatCode = reservation.getSeat_code(); // "12-B-4" 꼴
+        String[] splitSeatCode = fullSeatCode.split("-",2);
+        int storeNo = Integer.parseInt(splitSeatCode[0]);
+        String selectedRawSeatCode = splitSeatCode[1]; // "B-4" 꼴
+
+        ArrayList<SeatDto> seats = seatController.getSeats(storeNo);
+        StoreDto store = storeController.getStore(storeNo);
+        String storeName = store.getName();
+
+        System.out.printf("""
+                    ╔══════════════════════════════════════════════════╗
+                    ║                좌석 예약 시스템 - 사용자               ║
+                    ║                 환영합니다, %s님!                 ║
+                    ╚══════════════════════════════════════════════════╝
+                    \n""", currentUser.getName());
+        System.out.printf("오늘 날짜: %s\n", LocalDateTime.now());
+        System.out.println();
+
+        SeatChart.showSeatingChartForUser(seats, selectedRawSeatCode,storeName);
+
+        System.out.println("""
+                1. 좌석 변경하기
+                2. 예약 취소하기
+                3. 뒤로가기
+                
+                """);
+        System.out.print("입력 > ");
+        int ch = scan.nextInt();
+        if( ch == 1 ){ // 좌석 변경하기
+            System.out.println("--- 좌석 변경 ---");
+            System.out.printf("현재 %s 좌석을 어느 좌석으로 변경할까요? > ", selectedRawSeatCode);
+            String newSeatCode = scan.next();
+
+            int userNo = currentUser.getNo();
+            int result = reservationController.updateReservation(userNo, storeNo, selectedRawSeatCode, newSeatCode);
+            if( result == 0 ){ // 좌석 예약 변경 성공
+                System.out.printf("성공적으로 %s 좌석에서 %s 좌석으로 예약이 변경되었습니다!\n\n",selectedRawSeatCode, newSeatCode);
+            }
+            else if( result == 1 ){
+                System.out.printf("%s 좌석은 이미 예약되었거나 존재하지 않는 자리입니다.\n",selectedRawSeatCode);
+            }
+            else if( result == 2 ) { // DB 오류
+                System.out.println("예약 변경에 실패했습니다. (DB 오류)");
+            }
+        }
+        else if ( ch == 2 ) { // 예약 취소하기
+            System.out.println("--- 좌석 예약 취소 ---");
+            System.out.printf("정말 %s 좌석을 취소하시겠습니까? (y/n) > ", selectedRawSeatCode);
+            String answer = scan.next();
+            if(answer.equals("y")){
+                int userNo = currentUser.getNo();
+                boolean result = reservationController.deleteReservation(userNo, storeNo, selectedRawSeatCode);
+                if ( result ){
+                    System.out.println("예약이 취소되었습니다!");
+                }
+                else {
+                    System.out.println("예약 취소에 실패했습니다.");
+                }
+            }
+            else{
+                return;
+            }
+        }
+        else if ( ch == 3 ){ // 뒤로가기
+            return;
         }
     }
 }
