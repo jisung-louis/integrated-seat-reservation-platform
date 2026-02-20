@@ -298,7 +298,8 @@ public class AdminView {
             String confirm = scan.nextLine();
             if (confirm.equals("Y")) {
                 // 매장삭제 안됨 DB에는 저장되지만 실제로 테스트할땐 살아있고 매장을 추가할때 제품번호는 늘어나지만 삭제한 뒤 제품번호가 최신화 안됨
-                boolean result=StoreController.getInstance().deleteStore(selectedStore.getNo());
+                // 즉] 추가할 시 인덱스는 늘어나고 삭제하면 그만큼 인덱스가 최신화되야함 매장을 삭제하면 삭제화면/관리화면이 아닌 관리할매장 선택 화면으로 가져야함
+                StoreController.getInstance().deleteStore(selectedStore.getNo());
                 System.out.println("\n✓ 매장 정보가 삭제되었습니다!\n");
                 break;
             } else if (confirm.equals("N")) {
