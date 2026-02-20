@@ -28,11 +28,10 @@ public class AdminView {
     public void index(UserDto user){
         for(;;){
             try {
-                System.out.printf(
-                        "╔══════════════════════════════════════════════════╗\n" +
-                        "║              좌석 예약 시스템 - 관리자               ║\n" +
-                        "║                환영합니다, %s님!                ║\n" +
-                        "╚══════════════════════════════════════════════════╝\n",user.getName());
+                System.out.printf("╔══════════════════════════════════════════════════╗\n");
+                System.out.printf("║              좌석 예약 시스템 - 관리자              ║\n");
+                System.out.printf("║              환영합니다, %-24s ║\n",user.getName()+"님!");
+                System.out.printf("╚══════════════════════════════════════════════════╝\n");
                 System.out.printf("관리자: %s\n",user.getName());
                 System.out.printf("오늘 날짜: %s\n",now);
                 System.out.println("\n" +
@@ -54,10 +53,7 @@ public class AdminView {
                     managementView(selectedStore);
                 }
                 else if (ch == 100) {addView();}
-                else if (ch == 200) {
-                    Session.logout();
-                    break;
-                }
+                else if (ch == 200) {Session.logout();break;}
                 else {System.out.println("[경고]없는 기능 번호입니다.");}
             }catch (InputMismatchException i){
                 System.out.println("[경고]잘못된 입력 방식입니다.[재입력]");
@@ -108,17 +104,15 @@ public class AdminView {
         }
     }
     public void managementView(StoreDto selectedStore){
-        UserDto user=new UserDto();
         for(;;) {
-            System.out.printf(
-                    "╔══════════════════════════════════════════════════╗\n" +
-                            "║           <%s 매장>의좌석 예약 시스템     ║\n" +
-                            "║               관리자님 환영합니다!                  ║\n" +
-                            "╚══════════════════════════════════════════════════╝\n\n", selectedStore.getName());
+            System.out.printf("╔══════════════════════════════════════════════════╗\n");
+            System.out.printf("║           <%-31s║\n",selectedStore.getName()+"매장>의좌석 예약 시스템");
+            System.out.printf("║                  %-27s ║\n",Session.getLoginUser().getName()+"님 환영합니다!");
+            System.out.printf("╚══════════════════════════════════════════════════╝\n\n");
             System.out.printf("\uD83D\uDCC5 오늘 날짜: %s\n", now);
             System.out.println("\n========================================\n");
             System.out.printf("\uD83D\uDCCB 매장명: %s\n" + "========================================\n\n", selectedStore.getName());
-            System.out.println(
+            System.out.print(
                     "\uD83D\uDD39 매장 관리\n" +
                             "1. 매장 정보 관리\n" +
                             "2. 좌석 배치 관리\n" +
@@ -130,35 +124,25 @@ public class AdminView {
                             "6. 취소/환불 처리(미완)\n" +
                             "\n" +
                             "\uD83D\uDD39 설정\n" +
-                            "7. 관리자 정보 수정(미완)\n" +
+                            "7. 관리자 정보 수정\n" +
                             "\n" +
                             "\uD83D\uDD39 기타\n" +
                             "8. 뒤로가기\n" +
                             "\n" +
                             "선택 >> ");
-            int ch = scan.nextInt();
-            if (ch == 1) {
-                storeManagementView(selectedStore);
-            } // 매장 정보 관리 선택 시 -> storeManagementView 로 이동
-            else if (ch == 2) {
-                seatManagementView(selectedStore.getNo());
-            } // 좌석 배치 관리 선택 시 -> setManagementView 로 이동
-            else if (ch == 3) {
-                // TODO : 영업시간 설정 뷰로 이동
-            } else if (ch == 4) {
-                adminReservationView(selectedStore.getNo(),selectedStore.getName());
-            } // 예약 내역 조회 선택시 -> adminReservationView 로 이동
-            else if (ch == 5) {
-                // TODO : 예약 수동 등록 뷰로 이동
-            } else if (ch == 6) {
-                // TODO : 취소/환불 처리 뷰로 이동
-            } else if (ch == 7) {
-                // TODO : 관리자 정보 수정 뷰로 이동
-                adminUpdate();
-            } else if (ch == 8) {
-                // TODO : 뒤로가기
-                break;
+            String input = scan.nextLine();
+            if (input.equals("1")) {storeManagementView(selectedStore);} // 매장 정보 관리 선택 시 -> storeManagementView 로 이동
+            else if (input.equals("2")) {seatManagementView(selectedStore.getNo());} // 좌석 배치 관리 선택 시 -> setManagementView 로 이동
+            else if (input.equals("3")) {}// TODO : 영업시간 설정 뷰로 이동}
+            else if (input.equals("4")) {adminReservationView(selectedStore.getNo(),selectedStore.getName());} // 예약 내역 조회 선택시 -> adminReservationView 로 이동
+            else if (input.equals("5")) {} // TODO : 예약 수동 등록 뷰로 이동
+            else if (input.equals("6")) {} // TODO : 취소/환불 처리 뷰로 이동
+            else if (input.equals("7")) {adminUpdate();} // TODO : 관리자 정보 수정 뷰로 이동
+            else if (input.equals("8")) {break;} // TODO : 뒤로가기
+            else if(input.isEmpty()||Integer.parseInt(input)<1||Integer.parseInt(input)>8) {    // 입력 번호가 다를때
+                System.out.println("[오류]입력하신 번호가 잘못 되었습니다.다시 입력해주세요");
             }
+            else {System.out.println("[오류]잘못된 입력입니다.");}
         }
     }
     public void storeManagementView (StoreDto selectedStore){
@@ -186,16 +170,12 @@ public class AdminView {
                     "3. 뒤로 가기\n" +
                     "\n" +
                     "선택 >>");
-            int ch = scan.nextInt();
-            if (ch == 1) {
-                storeUpdateView(selectedStore);
-            } // 매장 수정 선택 시 -> storeUpdateView 로 이동
-            else if (ch == 2) {
-                storeDeleteView(selectedStore);
-            } // 매장 삭제 선택 시 -> storeDeleteView 로 이동
-            else if (ch == 3) {
-                break;
-            }
+            String input = scan.nextLine();
+            if (input.equals("1")) {storeUpdateView(selectedStore);} // 매장 수정 선택 시 -> storeUpdateView 로 이동
+            else if (input.equals("2")) {storeDeleteView(selectedStore);} // 매장 삭제 선택 시 -> storeDeleteView 로 이동
+            else if (input.equals("3")) {break;}                        // 뒤로 가기 선택 시 -> managementView로 이동
+            else if (input.isEmpty()) {System.out.println("[오류]아무것도 입력하지 않았습니다.다시 입력해주세요.");}   // 입력하지 않았을 경우 반복
+            else{System.out.println("[오류]잘못된 입력입니다.");}     // 잘못된 입력일 경우 반복
         }
     }
     // [3] 게시물 수정
@@ -210,7 +190,6 @@ public class AdminView {
                 "\uD83D\uDCDE 매장 연락처\n" +
                 "현재: %s\n" +
                 "변경: (변경 안하려면 Enter) >> \n",selectedStore.getName(),selectedStore.getContact());
-        scan.nextLine();
         String contact = scan.nextLine();
         if (contact.isEmpty()) contact = selectedStore.getContact();
         System.out.printf("\n\uD83D\uDCE7 이메일\n" +
@@ -315,29 +294,22 @@ public class AdminView {
                 "- 삭제 후 복구할 수 없습니다\n\n" +
                 "========================================\n");
         for(;;) {
-            System.out.println("정말 저장하시겠습니까? (Y/N) >> ");
-            scan.nextLine();
+            System.out.println("정말 매장 정보를 삭제하시겠습니까? (Y/N) >> ");
             String confirm = scan.nextLine();
             if (confirm.equals("Y")) {
                 boolean result=StoreController.getInstance().deleteStore(selectedStore.getNo());    // 매장삭제
                 System.out.println("\n✓ 매장 정보가 삭제되었습니다!\n\n" +
                         "1. 계속 수정하기\n" +
                         "2. 뒤로가기\n\n" +
-                        "선택 >>");int ch=scan.nextInt();
-                if( ch == 1 ){
-                    continue;
-                }
-                else if( ch == 2){
-                    break;
-                }
+                        "선택 >>");String input=scan.nextLine();
+                if(input.equals("1")){}
+                else if(input.equals("2")){break;}
+                else if(input.isEmpty()){System.out.print("[오류]아무것도 입력하지 않으셨습니다.다시 입력해주세요.");}
+                else{System.out.println("[오류]잘못된 입력입니다.");}
             } else if (confirm.equals("N")) {
                 System.out.println("\n✕ 매장 정보 삭제를 취소합니다. 이전 화면으로 돌아갑니다.\n\n");
                 break;
-            }else{
-                System.out.println("[안내]저장을 실패하였습니다 Y/N로 입력해주세요");
-                continue;
-            }
-            break;
+            }else{System.out.println("[안내]저장을 실패하였습니다 Y/N로 입력해주세요");}
         }
     }
     public void adminUpdate(){
@@ -354,7 +326,6 @@ public class AdminView {
                 "           본인 확인을 진행합니다\n" +
                 "========================================\n" +
                 "\n",admin.getId(),admin.getName());
-        scan.nextLine();
         for(;;) {
             System.out.println("\uD83D\uDD11 현재 비밀번호 입력 >> ");
             String password = scan.nextLine();
@@ -409,11 +380,11 @@ public class AdminView {
                         System.out.println("[안내]저장을 실패하였습니다 Y/N로 입력해주세요");
                     }
                 }
-                break;
             } else {
                 System.out.println("다시 입력해주세요.");
                 continue;
             }
+            break;
         }
     }
     /**
