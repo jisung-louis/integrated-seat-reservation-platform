@@ -20,41 +20,12 @@ public class ReservationController {
     private ReservationDao reservationDao = JdbcReservationDao.getInstance();
     private SeatDao seatDao = JdbcSeatDao.getInstance();
 
-    // [1] 특정 매장 예약 내역 조회
-    // 관리자 기능
-    public void getStoreReservations(int store_no) {
-        ArrayList<ReservationDto> result = reservationDao.getReservationsByStoreNo(store_no);
-
-        System.out.println("\n========================================");
-        System.out.printf("           예약 목록 (총 %d건)\n", result.size());
-        System.out.println("========================================\n");
-
-        if (result.isEmpty()) {
-            System.out.println("   현재 예약된 내역이 없습니다.");
-        } else {
-            int index = 1;
-            for (ReservationDto dto : result) {
-                System.out.printf("[%d]\n", index++);
-                System.out.println("예약자: " + dto.getUserName() + " (" + dto.getUserId() + ")");
-                System.out.println("좌석: " + dto.getSeat_code());
-
-                String date = dto.getReservedAt();
-                if (date != null && date.length() > 19) {
-                    date = date.substring(0, 19);
-                }
-                
-                System.out.println("상태: ✅ 예약확정");
-                System.out.println("예약일시: " + date);
-                System.out.println("----------------------------------------");
-            }
-        }
-        System.out.println("0. 뒤로 가기");
+    // [1] 특정 매장 예약 내역 조회 (데이터 반환형)
+    public ArrayList<ReservationDto> getStoreReservations(int store_no) {
+        return reservationDao.getReservationsByStoreNo(store_no);
     }
 
-
-
     // [2] 특정 매장의 특정 좌석 예약하기
-
     /**
      *
      * @param user_no 유저 번호
@@ -62,24 +33,24 @@ public class ReservationController {
      * @param rawSeatCode 좌석 코드
      * @return [1] : 예약 성공, [0] : DB 오류로 예약 실패, [-1]: 이미 예약된 자리라서 실패, [-2]: 해당 좌석이 존재하지 않아 실패
      */
-    public int doReservation(int user_no, int store_no ,String rawSeatCode){
+    public int doReservation(int user_no, int store_no, String rawSeatCode) {
         ArrayList<SeatDto> seats = seatDao.getSeats(store_no);
         SeatDto target = null;
         String seatCode = store_no + "-" + rawSeatCode; // "B-4" 꼴을 "1-B-4" 꼴로 만듦
-        for(SeatDto seat : seats){
-            if(seat.getCode().equals(seatCode)){
+        for (SeatDto seat : seats) {
+            if (seat.getCode().equals(seatCode)) {
                 target = seat;
                 break;
             }
         }
-        if(target == null){
-            return -2;
-        } // 해당 좌석은 매장에 존재하지 않음
-        if (target.getStatus() != 0){
-            return -1;
-        } // 해당 좌석은 이미 예약된 자리임
+        if (target == null) {
+            return -2; // 해당 좌석은 매장에 존재하지 않음
+        }
+        if (target.getStatus() != 0) {
+            return -1; // 해당 좌석은 이미 예약된 자리임
+        }
 
-        boolean result1 = reservationDao.doReservation(user_no,seatCode);
+        boolean result1 = reservationDao.doReservation(user_no, seatCode);
         boolean result2 = seatDao.updateSeatStatus(seatCode, 1);
 
         // TODO : 둘 중 하나라도 실패시 롤백하는 로직 있어야 함. (예 : result1 성공했지만 result2 실패 시 해당 예약 deleteReservation DAO 호출)
@@ -88,17 +59,15 @@ public class ReservationController {
     }
 
     // [3] 예약 취소
-    public void deleteReservation(int user_no, int store_no, String seatCode) {
+    public boolean deleteReservation(int user_no, int store_no, String seatCode) {
         if (reservationDao.deleteReservation(user_no, seatCode)) {
-            seatDao.updateSeatStatus(seatCode, 0); 
-            System.out.println("예약이 취소되었습니다!");
-        } else {
-            System.out.println("예약 취소에 실패했습니다.");
+            return seatDao.updateSeatStatus(seatCode, 0); 
         }
+        return false;
     }
 
     // [4] 예약 변경
-    public void updateReservation(int user_no, int store_no, String oldCode, String newCode) {
+    public int updateReservation(int user_no, int store_no, String oldCode, String newCode) {
         ArrayList<SeatDto> seats = seatDao.getSeats(store_no);
         SeatDto target = null;
         for (SeatDto s : seats) {
@@ -108,17 +77,15 @@ public class ReservationController {
             }
         }
         if (target == null || target.getStatus() != 0) {
-            System.out.println(newCode + " 좌석은 이미 예약된 자리이거나 변경 불가능한 자리입니다.");
-            return;
+            return 1; // 대상 좌석 불가능
         }
 
         if (reservationDao.updateReservation(user_no, oldCode, newCode)) {
             seatDao.updateSeatStatus(oldCode, 0); 
             seatDao.updateSeatStatus(newCode, 1);
-            
-            System.out.println("성공적으로 좌석 예약이 변경되었습니다!");
-        } else {
-            System.out.println("예약 변경 처리 중 오류가 발생했습니다.");
+            return 0; // 성공
         }
+        return 2; // DB 오류
     }
 }
+

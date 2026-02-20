@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.Scanner;
 
 import controller.UserController;
+import model.dto.ReservationDto;
 import model.dto.SeatDto;
 import model.dto.StoreDto;
 import model.dto.UserDto;
@@ -490,8 +491,32 @@ public class AdminView {
             ArrayList<SeatDto> seats = seatC.getSeats(store_no);
             SeatChart.showSeatingChartForReservationManagement(seats, storeName);
 
-            // [B 담당자 영역] 예약 목록 출력
-            ReservationController.getInstance().getStoreReservations(store_no);
+            // [B 담당자 영역] 예약 목록 출력 (데이터를 받아서 직접 출력)
+            ArrayList<ReservationDto> result = ReservationController.getInstance().getStoreReservations(store_no);
+
+            System.out.println("\n========================================");
+            System.out.printf("           예약 목록 (총 %d건)\n", result.size());
+            System.out.println("========================================\n");
+
+            if (result.isEmpty()) {
+                System.out.println("   현재 예약된 내역이 없습니다.");
+            } else {
+                int index = 1;
+                for (ReservationDto dto : result) {
+                    System.out.printf("[%d]\n", index++);
+                    System.out.println("예약자: " + dto.getUserName() + " (" + dto.getUserId() + ")");
+                    System.out.println("좌석: " + dto.getSeat_code());
+
+                    String date = dto.getReservedAt();
+                    if (date != null && date.length() > 19) {
+                        date = date.substring(0, 19);
+                    }
+                    
+                    System.out.println("상태: ✅ 예약확정");
+                    System.out.println("예약일시: " + date);
+                    System.out.println("----------------------------------------");
+                }
+            }
 
             System.out.println("n. 다음 페이지 | p. 이전 페이지 | 0. 뒤로 가기");
             System.out.print("선택 >> ");
