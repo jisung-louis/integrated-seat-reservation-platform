@@ -9,6 +9,7 @@ public class ReservationDto {
     // 조인용 추가 필드
     private String userName; 
     private String userId;
+    private String storeName;
 
     public ReservationDto() { }
 
@@ -28,6 +29,17 @@ public class ReservationDto {
         this.userId = userId;
     }
 
+    // 4단 조인용 생성자 추가
+    public ReservationDto(int no, int user_no, String seat_code, String reservedAt, String userName, String userId, String storeName) {
+        this.no = no;
+        this.user_no = user_no;
+        this.seat_code = seat_code;
+        this.reservedAt = reservedAt;
+        this.userName = userName;
+        this.userId = userId;
+        this.storeName = storeName;
+    }
+
     public int getNo() { return no; }
     public void setNo(int no) { this.no = no; }
     public int getUser_no() { return user_no; }
@@ -41,6 +53,8 @@ public class ReservationDto {
     public void setUserName(String userName) { this.userName = userName; }
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
+    public String getStoreName() { return storeName; }
+    public void setStoreName(String storeName) { this.storeName = storeName; }
 
     @Override
     public String toString() {
@@ -51,6 +65,7 @@ public class ReservationDto {
                 ", reservedAt='" + reservedAt + '\'' +
                 ", userName='" + userName + '\'' +
                 ", userId='" + userId + '\'' +
+                ", storeName='" + storeName + '\'' +
                 '}';
     }
 }

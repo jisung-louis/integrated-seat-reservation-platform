@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 public class JdbcReservationDao extends DBConnection implements ReservationDao{
     private Connection conn;
+
     private PreparedStatement ps;
     private ResultSet rs;
 
@@ -99,13 +100,16 @@ public class JdbcReservationDao extends DBConnection implements ReservationDao{
     }
 
     // 사용자 기준
-    // [예약 + 유저 + 좌석 + 매장] 아래 조인 다시변경해야됨
+    // [예약 + 유저 + 좌석 + 매장] 4단 조인 구현
     @Override
     public ArrayList<ReservationDto> getReservationsByUserNo(int user_no) {
         ArrayList<ReservationDto> list = new ArrayList<>();
-        String sql =
-                "select r.*, u.name as userName, u.id as userId from reservation r " +
-                "join user u on r.user_no = u.no where r.user_no = ?";
+        String sql = "select r.*, u.name as userName, u.id as userId, st.name as storeName " +
+                     "from reservation r " +
+                     "join user u on r.user_no = u.no " +
+                     "join seat s on r.seat_code = s.code " +
+                     "join store st on s.store_no = st.no " +
+                     "where r.user_no = ?";
         try {
             ps = conn.prepareStatement(sql);
             ps.setInt(1, user_no);
@@ -117,7 +121,8 @@ public class JdbcReservationDao extends DBConnection implements ReservationDao{
                     rs.getString("seat_code"),
                     rs.getString("reservedAt"),
                     rs.getString("userName"),
-                    rs.getString("userId")
+                    rs.getString("userId"),
+                    rs.getString("storeName")
                 ));
             }
         } catch (SQLException e) { e.printStackTrace(); }
