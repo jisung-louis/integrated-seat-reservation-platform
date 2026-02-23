@@ -64,7 +64,10 @@ public class ReservationController {
     }
 
     // [3] 예약 취소
-    public boolean deleteReservation(int user_no, int store_no, String seatCode) {
+    public boolean deleteReservation(int user_no, int store_no, String rawSeatCode) {
+
+        String seatCode = store_no + "-" + rawSeatCode;
+
         if (reservationDao.deleteReservation(user_no, seatCode)) {
             return seatDao.updateSeatStatus(seatCode, 0);
         }
@@ -90,7 +93,6 @@ public class ReservationController {
                 break;
             }
         }
-        System.out.println(target);
         if (target == null || target.getStatus() != 0) {
             return 1; // 대상 좌석 불가능
         }
