@@ -19,22 +19,30 @@ import model.dto.UserDto;
 import session.Session;
 
 public class AdminView {
-    private AdminView(){}
+    private AdminView() {
+    }
+
     private static AdminView instance = new AdminView();
-    public static AdminView getInstance() {return instance;}
+
+    public static AdminView getInstance() {
+        return instance;
+    }
+
     Scanner scan = new Scanner(System.in);
     StoreController sc = StoreController.getInstance();
+    UserController uc = UserController.getInstance();
     SeatController seatC = SeatController.getInstance();
     LocalDate now = LocalDate.now();
-    public void index(UserDto user){
-        for(;;){
+
+    public void index(UserDto user) {
+        for (; ; ) {
             try {
                 System.out.printf("╔══════════════════════════════════════════════════╗\n");
                 System.out.printf("║              좌석 예약 시스템 - 관리자              ║\n");
-                System.out.printf("║              환영합니다, %-24s ║\n",user.getName()+"님!");
+                System.out.printf("║              환영합니다, %-24s ║\n", user.getName() + "님!");
                 System.out.printf("╚══════════════════════════════════════════════════╝\n");
-                System.out.printf("관리자: %s\n",user.getName());
-                System.out.printf("오늘 날짜: %s\n",now);
+                System.out.printf("관리자: %s\n", user.getName());
+                System.out.printf("오늘 날짜: %s\n", now);
                 System.out.println("\n" +
                         "========================================\n" +
                         "        관리할 매장을 선택하세요\n" +
@@ -42,73 +50,101 @@ public class AdminView {
 
                 int count = 1;
                 ArrayList<StoreDto> result = sc.getMyStores(user.getNo());
-                for(StoreDto stores:result){
-                    System.out.println(count+". "+stores.getName());
+                for (StoreDto stores : result) {
+                    System.out.println(count + ". " + stores.getName());
                     count++;
                 }
-                System.out.println("100.매장추가\n200.로그아웃\n");
+                System.out.println("100.매장추가\n200.관리자 정보 수정\n300.로그아웃");
                 System.out.print("선택>");
-                int ch=scan.nextInt();
-                if (ch>=1&&ch<=result.size()) {
-                    StoreDto selectedStore=result.get(ch-1);
-                    managementView(selectedStore);
+                int ch = scan.nextInt();
+                if (ch >= 1 && ch <= result.size()) {
+                    StoreDto selectedStore = result.get(ch - 1);
+                    managementView(selectedStore.getNo());
+                } else if (ch == 100) {
+                    addView();
+                } else if (ch == 200) {
+                    adminUpdate();
+                } else if (ch == 300) {
+                    Session.logout();
+                    break;
+                } else {
+                    System.out.println("[경고]없는 기능 번호입니다.");
                 }
-                else if (ch == 100) {addView();}
-                else if (ch == 200) {Session.logout();break;}
-                else {System.out.println("[경고]없는 기능 번호입니다.");}
-            }catch (InputMismatchException i){
+            } catch (InputMismatchException i) {
                 System.out.println("[경고]잘못된 입력 방식입니다.[재입력]");
                 scan = new Scanner(System.in);
-            }catch (Exception e){
-                System.out.println("[시스템오류]관리자에게 문의");
+            } catch (Exception e) {
+                System.out.printf("[시스템오류]관리자에게 문의 //  %s\n", e);
                 break;
             }
         }
     }
-    public void addView(){
+
+    public void addView() {
         System.out.println(
                 "╔══════════════════════════════════════════════════╗\n" +
-                "║                      매장 추가                    ║\n" +
-                "╚══════════════════════════════════════════════════╝\n" +
-                "\n" +
-                "새로운 매장 정보를 입력하세요.");
+                        "║                      매장 추가                    ║\n" +
+                        "╚══════════════════════════════════════════════════╝\n" +
+                        "\n" +
+                        "새로운 매장 정보를 입력하세요.");
         scan.nextLine();
         System.out.print("========================================\n" +
                 "\n" +
-                "\uD83D\uDCCB 매장명: ");String name=scan.nextLine();
+                "\uD83D\uDCCB 매장명: ");
+        String name = scan.nextLine();
         System.out.print(
-                "\uD83C\uDFF7\uFE0F 카테고리:");String category=scan.nextLine();
+                "\uD83C\uDFF7\uFE0F 카테고리:");
+        String category = scan.nextLine();
         System.out.print(
-                "\uD83D\uDCCD 주소:");String address=scan.nextLine();
+                "\uD83D\uDCCD 주소:");
+        String address = scan.nextLine();
         System.out.print(
-                "\uD83D\uDCDE 연락처: ");String contact=scan.nextLine();
-        System.out.print("\uD83D\uDCE7 이메일: ");String email=scan.next();
+                "\uD83D\uDCDE 연락처: ");
+        String contact = scan.nextLine();
+        System.out.print("\uD83D\uDCE7 이메일: ");
+        String email = scan.next();
         scan.nextLine();
-        System.out.print("⏰[평일] 영업시간: ");String bh_weekdays= scan.nextLine();
-        System.out.print(" ⏰[토요일] 영업시간: ");String bh_saturday= scan.nextLine();
-        System.out.print(" ⏰[일요일] 영업시간: ");String bh_sunday= scan.nextLine();
+        System.out.print("⏰[평일] 영업시간: ");
+        String bh_weekdays = scan.nextLine();
+        System.out.print(" ⏰[토요일] 영업시간: ");
+        String bh_saturday = scan.nextLine();
+        System.out.print(" ⏰[일요일] 영업시간: ");
+        String bh_sunday = scan.nextLine();
         System.out.println("\uD83D\uDFE2 운영 상태");
         System.out.println("1.정상 영업중");
         System.out.println("2.예약 일시 중단");
         System.out.print("3.영업 중단\n선택>");
         int status = scan.nextInt();
         scan.nextLine();
-        System.out.println("========================================\n" +
-                            "이대로 매장을 추가하시겠습니까? (Y/N) >>");char add=scan.next().charAt(0);
-        if(add == 'Y'){
-            sc.addStore(Session.loginUser.getNo(), name,category,address,contact,email,bh_weekdays,bh_saturday,bh_sunday,status);
-            System.out.println("✓ 매장이 등록되었습니다!\n매장 선택 화면으로 이동");
-        }else if(add == 'N'){
-            System.out.println("매장등록을 취소하셨습니다");
-        }else{
-            System.out.println("[경고]잘못된 입력입니다.");
+        for (; ; ) {
+            System.out.println("========================================\n" +
+                    "이대로 매장을 추가하시겠습니까? (Y/N) >>");
+            String add = scan.nextLine();
+            if (add.equals("Y")) {
+                sc.addStore(Session.loginUser.getNo(), name, category, address, contact, email, bh_weekdays, bh_saturday, bh_sunday, status);
+                System.out.println("✓ 매장이 등록되었습니다!\n매장 선택 화면으로 이동");
+                break;
+            } else if (add.equals("N")) {
+                System.out.println("매장등록을 취소하셨습니다");
+                break;
+            } else if (add.isEmpty()) {
+                System.out.println("[경고] 아무것도 입력되지 않았습니다.");
+            } else {
+                System.out.println("[경고] 잘못된 값을 입력했습니다.");
+            }
         }
     }
-    public void managementView(StoreDto selectedStore){
-        for(;;) {
+
+    public void managementView(int storeNo) {
+        for (; ; ) {
+            StoreDto selectedStore = sc.getStore(storeNo);
+            if (selectedStore == null) {
+                break;
+            }
+            String storeName = selectedStore.getName();
             System.out.printf("╔══════════════════════════════════════════════════╗\n");
-            System.out.printf("║           <%-31s║\n",selectedStore.getName()+"매장>의좌석 예약 시스템");
-            System.out.printf("║                  %-27s ║\n",Session.getLoginUser().getName()+"님 환영합니다!");
+            System.out.printf("║           <%-31s║\n", selectedStore.getName() + "매장>의좌석 예약 시스템");
+            System.out.printf("║                  %-27s ║\n", Session.getLoginUser().getName() + "님 환영합니다!");
             System.out.printf("╚══════════════════════════════════════════════════╝\n\n");
             System.out.printf("\uD83D\uDCC5 오늘 날짜: %s\n", now);
             System.out.println("\n========================================\n");
@@ -117,38 +153,51 @@ public class AdminView {
                     "\uD83D\uDD39 매장 관리\n" +
                             "1. 매장 정보 관리\n" +
                             "2. 좌석 배치 관리\n" +
-                            "3. 영업시간 설정(미완)\n" +
                             "\n" +
                             "\uD83D\uDD39 예약 관리\n" +
-                            "4. 예약 내역 조회\n" +
-                            "5. 예약 수동 등록(미완)\n" +
-                            "6. 취소/환불 처리(미완)\n" +
-                            "\n" +
-                            "\uD83D\uDD39 설정\n" +
-                            "7. 관리자 정보 수정\n" +
+                            "3. 예약 내역 조회\n" +
                             "\n" +
                             "\uD83D\uDD39 기타\n" +
-                            "8. 뒤로가기\n" +
+                            "4. 뒤로가기\n" +
                             "\n" +
                             "선택 >> ");
+            scan.nextLine();
             String input = scan.nextLine();
-            if (input.equals("1")) {storeManagementView(selectedStore);} // 매장 정보 관리 선택 시 -> storeManagementView 로 이동
-            else if (input.equals("2")) {seatManagementView(selectedStore.getNo());} // 좌석 배치 관리 선택 시 -> setManagementView 로 이동
-            else if (input.equals("3")) {}// TODO : 영업시간 설정 뷰로 이동}
-            else if (input.equals("4")) {adminReservationView(selectedStore.getNo(),selectedStore.getName());} // 예약 내역 조회 선택시 -> adminReservationView 로 이동
-            else if (input.equals("5")) {} // TODO : 예약 수동 등록 뷰로 이동
-            else if (input.equals("6")) {} // TODO : 취소/환불 처리 뷰로 이동
-            else if (input.equals("7")) {adminUpdate();} // TODO : 관리자 정보 수정 뷰로 이동
-            else if (input.equals("8")) {break;} // TODO : 뒤로가기
-            else if(input.isEmpty()||Integer.parseInt(input)<1||Integer.parseInt(input)>8) {    // 입력 번호가 다를때
-                System.out.println("[오류]입력하신 번호가 잘못 되었습니다.다시 입력해주세요");
+            if (input.equals("1")) {
+                storeManagementView(storeNo);
+            } // 매장 정보 관리 선택 시 -> storeManagementView 로 이동
+            else if (input.equals("2")) {
+                seatManagementView(storeNo);
+            } // 좌석 배치 관리 선택 시 -> setManagementView 로 이동
+            else if (input.equals("3")) {
+                adminReservationView(storeNo);
+            } // 예약 내역 조회 선택시 -> adminReservationView 로 이동
+            else if (input.equals("4")) {
+                break;
             }
-            else {System.out.println("[오류]잘못된 입력입니다.");}
+            else if (input.isEmpty()
+                    || Integer.parseInt(input) < 1
+                    || Integer.parseInt(input) > 4) {    // 입력 번호가 다를때
+                System.out.println("[오류]입력하신 번호가 잘못 되었습니다.다시 입력해주세요");
+            } else {
+                System.out.println("[오류]잘못된 입력입니다.");
+            }
         }
     }
-    public void storeManagementView (StoreDto selectedStore){
-        int totalSeatCount=seatC.getSeats(selectedStore.getNo()).size();
-        for(;;) {
+
+    public void storeManagementView(int storeNo) {
+        for (; ; ) {
+            StoreDto selectedStore = sc.getStore(storeNo);
+            int totalSeatCount = seatC.getSeats(selectedStore.getNo()).size();
+            String statusIcon = "🟢";
+            int status = selectedStore.getStatus();
+            if (status == 1) {
+                statusIcon = "🟢";
+            } else if (status == 2) {
+                statusIcon = "🟡";
+            } else {
+                statusIcon = "🔴";
+            }
             System.out.println(
                     "╔══════════════════════════════════════════════════╗\n" +
                             "║                  매장 정보 관리                    ║\n" +
@@ -161,50 +210,66 @@ public class AdminView {
             System.out.printf("영업시간:\n 평일 : %s\n", selectedStore.getBh_weekdays());
             System.out.printf("  토요일: %s\n", selectedStore.getBh_saturday());
             System.out.printf("  일요일/공휴일: %s\n\n", selectedStore.getBh_sunday());
-            System.out.printf("총 좌석: %d\n",totalSeatCount);
-            System.out.printf("운영 상태: \uD83D\uDFE2 %s\n\n", selectedStore.getStatus());
+            System.out.printf("총 좌석: %d\n", totalSeatCount);
+            System.out.printf("운영 상태: %s\n\n", statusIcon);
             System.out.print(
                     "========================================\n" +
-                    "\n" +
-                    "1. 매장 수정\n" +
-                    "2. 매장 삭제\n" +
-                    "3. 뒤로 가기\n" +
-                    "\n" +
-                    "선택 >>");
+                            "\n" +
+                            "1. 매장 수정\n" +
+                            "2. 매장 삭제\n" +
+                            "3. 뒤로 가기\n" +
+                            "\n" +
+                            "선택 >>");
             String input = scan.nextLine();
-            if (input.equals("1")) {storeUpdateView(selectedStore);} // 매장 수정 선택 시 -> storeUpdateView 로 이동
-            else if (input.equals("2")) {storeDeleteView(selectedStore);} // 매장 삭제 선택 시 -> storeDeleteView 로 이동
-            else if (input.equals("3")) {break;}                        // 뒤로 가기 선택 시 -> managementView로 이동
-            else if (input.isEmpty()) {System.out.println("[오류]아무것도 입력하지 않았습니다.다시 입력해주세요.");}   // 입력하지 않았을 경우 반복
-            else{System.out.println("[오류]잘못된 입력입니다.");}     // 잘못된 입력일 경우 반복
+            if (input.equals("1")) {
+                storeUpdateView(storeNo);
+            } // 매장 수정 선택 시 -> storeUpdateView 로 이동
+            else if (input.equals("2")) {
+                storeDeleteView(storeNo);
+                break;
+            } // 매장 삭제 선택 시 -> storeDeleteView 로 이동
+            else if (input.equals("3")) {
+                break;
+            }                        // 뒤로 가기 선택 시 -> managementView로 이동
+            else if (input.isEmpty()) {
+                System.out.println("[오류]아무것도 입력하지 않았습니다.다시 입력해주세요.");
+            }   // 입력하지 않았을 경우 반복
+            else {
+                System.out.println("[오류]잘못된 입력입니다.");
+            }     // 잘못된 입력일 경우 반복
         }
     }
+
     // [3] 게시물 수정
-    public void storeUpdateView(StoreDto selectedStore){
+    public void storeUpdateView(int storeNo) {
+        StoreDto selectedStore = sc.getStore(storeNo);
         System.out.printf(
                 "╔══════════════════════════════════════════════════╗\n" +
-                "║                    매장 정보 수정                  ║\n" +
-                "╚══════════════════════════════════════════════════╝\n\n" +
-                "매장: %s\n\n" +
-                "※ 매장명 변경은 고객센터 문의 필요\n" +
-                "========================================\n\n" +
-                "\uD83D\uDCDE 매장 연락처\n" +
-                "현재: %s\n" +
-                "변경: (변경 안하려면 Enter) >> \n",selectedStore.getName(),selectedStore.getContact());
+                        "║                    매장 정보 수정                  ║\n" +
+                        "╚══════════════════════════════════════════════════╝\n\n" +
+                        "매장: %s\n\n" +
+                        "※ 매장명 변경은 고객센터 문의 필요\n" +
+                        "========================================\n\n" +
+                        "\uD83D\uDCDE 매장 연락처\n" +
+                        "현재: %s\n" +
+                        "변경: (변경 안하려면 Enter) >> \n", selectedStore.getName(), selectedStore.getContact());
         String contact = scan.nextLine();
         if (contact.isEmpty()) contact = selectedStore.getContact();
         System.out.printf("\n\uD83D\uDCE7 이메일\n" +
                 "현재: %s\n" +
-                "변경: (변경 안하려면 Enter) >> ",selectedStore.getEmail()); String email=scan.nextLine();
+                "변경: (변경 안하려면 Enter) >> ", selectedStore.getEmail());
+        String email = scan.nextLine();
         if (email.isEmpty()) email = selectedStore.getEmail();
         System.out.printf("\n\uD83D\uDCCD 주소\n" +
                 "현재: %s\n" +
-                "변경: (변경 안하려면 Enter) >> ",selectedStore.getAddress()); String adress=scan.nextLine();
+                "변경: (변경 안하려면 Enter) >> ", selectedStore.getAddress());
+        String adress = scan.nextLine();
         if (adress.isEmpty()) adress = selectedStore.getAddress();
         System.out.printf(
                 "\n\uD83C\uDFF7\uFE0F 매장 카테고리\n" +
-                "현재: %s\n" +
-                "변경: (변경 안하려면 Enter) >> ",selectedStore.getCategory());String category=scan.nextLine();
+                        "현재: %s\n" +
+                        "변경: (변경 안하려면 Enter) >> ", selectedStore.getCategory());
+        String category = scan.nextLine();
         if (category.isEmpty()) category = selectedStore.getCategory();
         System.out.printf("\n⏰ 평일 영업시간\n현재: %s\n변경: >> ", selectedStore.getBh_weekdays());
         String bh_weekdays = scan.nextLine();
@@ -226,14 +291,15 @@ public class AdminView {
                 "  1. \uD83D\uDFE2 정상 영업중\n" +
                 "  2. \uD83D\uDFE1 예약 일시중단\n" +
                 "  3. \uD83D\uDD34 영업 중단\n" +
-                "선택: (변경 안하려면 Enter) >> ",status);String chInput = scan.nextLine();
-        int newStatus= chInput.isEmpty() ? selectedStore.getStatus() : Integer.parseInt(chInput);
-        for(;;) {
+                "선택: (변경 안하려면 Enter) >> ", status);
+        String chInput = scan.nextLine();
+        int newStatus = chInput.isEmpty() ? selectedStore.getStatus() : Integer.parseInt(chInput);
+        for (; ; ) {
             System.out.println("\n\n========================================\n\n" +
                     "정말 저장하시겠습니까? (Y/N) >> ");
             String confirm = scan.nextLine();
             if (confirm.equals("Y")) {
-                boolean result=StoreController.getInstance().updateStore(
+                boolean result = StoreController.getInstance().updateStore(
                         selectedStore.getNo(),
                         selectedStore.getName(),
                         category,
@@ -248,44 +314,46 @@ public class AdminView {
                 System.out.println("\n✓ 매장 정보가 업데이트되었습니다!\n\n" +
                         "1. 계속 수정하기\n" +
                         "2. 뒤로가기\n\n" +
-                        "선택 >>");int ch=scan.nextInt();
-                if( ch == 1 ){
+                        "선택 >>");
+                int ch = scan.nextInt();
+                if (ch == 1) {
                     continue;
-                }
-                else if( ch == 2){
+                } else if (ch == 2) {
                     break;
                 }
             } else if (confirm.equals("N")) {
                 System.out.println("\n✕ 수정을 취소합니다. 이전 화면으로 돌아갑니다.\n\n");
                 break;
-            } else{
+            } else {
                 System.out.println("[안내]저장을 실패하였습니다 Y/N로 입력해주세요");
                 continue;
             }
             break;
         }
     }
-    public void storeDeleteView(StoreDto selectedStore){
+
+    public void storeDeleteView(int storeNo) {
+        StoreDto selectedStore = sc.getStore(storeNo);
         System.out.printf(
                 "╔══════════════════════════════════════════════════╗\n" +
-                "║                      매장 삭제                    ║\n" +
-                "╚══════════════════════════════════════════════════╝\n\n" +
-                "⚠\uFE0F  경고: 매장 삭제는 복구할 수 없습니다!\n\n"+
-                "========================================\n" +
-                "           삭제할 매장 정보\n" +
-                "========================================\n" +
-                "\n" +
-                "매장명: %s\n" +
-                "카테고리: %s\n" +
-                "주소: %s\n" +
-                "연락처: %s\n" +
-                "이메일: %s\n\n" +
-                "영업시간:\n" +
-                "  평일: %s\n" +
-                "  토요일: %s\n" +
-                "  일요일/공휴일: %s\n\n",selectedStore.getName(),selectedStore.getCategory(),selectedStore.getAddress(),
-                                selectedStore.getContact(),selectedStore.getEmail(),selectedStore.getBh_weekdays(),
-                                selectedStore.getBh_saturday(),selectedStore.getBh_sunday());
+                        "║                      매장 삭제                    ║\n" +
+                        "╚══════════════════════════════════════════════════╝\n\n" +
+                        "⚠\uFE0F  경고: 매장 삭제는 복구할 수 없습니다!\n\n" +
+                        "========================================\n" +
+                        "           삭제할 매장 정보\n" +
+                        "========================================\n" +
+                        "\n" +
+                        "매장명: %s\n" +
+                        "카테고리: %s\n" +
+                        "주소: %s\n" +
+                        "연락처: %s\n" +
+                        "이메일: %s\n\n" +
+                        "영업시간:\n" +
+                        "  평일: %s\n" +
+                        "  토요일: %s\n" +
+                        "  일요일/공휴일: %s\n\n", selectedStore.getName(), selectedStore.getCategory(), selectedStore.getAddress(),
+                selectedStore.getContact(), selectedStore.getEmail(), selectedStore.getBh_weekdays(),
+                selectedStore.getBh_saturday(), selectedStore.getBh_sunday());
         System.out.println("운영 상태: \uD83D\uDFE2 정상 영업중\n\n" +
                 "========================================\n\n" +
                 "⚠\uFE0F  매장 삭제 시 주의사항:\n" +
@@ -294,37 +362,41 @@ public class AdminView {
                 "- 과거 예약 내역도 모두 삭제됩니다\n" +
                 "- 삭제 후 복구할 수 없습니다\n\n" +
                 "========================================\n");
-        for(;;) {
+        for (; ; ) {
             System.out.print("정말 매장 정보를 삭제하시겠습니까? (Y/N) >> ");
             String confirm = scan.nextLine();
             if (confirm.equals("Y")) {
                 // 매장삭제 안됨 DB에는 저장되지만 실제로 테스트할땐 살아있고 매장을 추가할때 제품번호는 늘어나지만 삭제한 뒤 제품번호가 최신화 안됨
                 // 즉] 추가할 시 인덱스는 늘어나고 삭제하면 그만큼 인덱스가 최신화되야함 매장을 삭제하면 삭제화면/관리화면이 아닌 관리할매장 선택 화면으로 가져야함
-                StoreController.getInstance().deleteStore(selectedStore.getNo());
-                System.out.println("\n✓ 매장 정보가 삭제되었습니다!\n");
+                boolean result = sc.deleteStore(selectedStore.getNo());
+                System.out.println(result ? "\n✓ 매장 정보가 삭제되었습니다!\n" : "\n X 매장 정보 삭제에 실패했습니다.");
                 break;
             } else if (confirm.equals("N")) {
                 System.out.println("\n✕ 매장 정보 삭제를 취소합니다. 이전 화면으로 돌아갑니다.\n\n");
                 break;
-            }else{System.out.println("[안내]저장을 실패하였습니다 Y/N로 입력해주세요");}
+            } else {
+                System.out.println("[안내]저장을 실패하였습니다 Y/N로 입력해주세요");
+            }
         }
     }
-    public void adminUpdate(){
-        UserDto admin=Session.getLoginUser();
+
+    public void adminUpdate() {
+        UserDto admin = Session.getLoginUser();
         System.out.printf(
                 "╔══════════════════════════════════════════════════╗\n" +
-                "║                  관리자 정보 수정                  ║\n" +
-                "╚══════════════════════════════════════════════════╝\n" +
-                "\n" +
-                "현재 로그인 계정: %s\n" +
-                "성함: %s\n" +
-                "\n" +
-                "========================================\n" +
-                "           본인 확인을 진행합니다\n" +
-                "========================================\n" +
-                "\n",admin.getId(),admin.getName());
-        for(;;) {
+                        "║                  관리자 정보 수정                  ║\n" +
+                        "╚══════════════════════════════════════════════════╝\n" +
+                        "\n" +
+                        "현재 로그인 계정: %s\n" +
+                        "성함: %s\n" +
+                        "\n" +
+                        "========================================\n" +
+                        "           본인 확인을 진행합니다\n" +
+                        "========================================\n" +
+                        "\n", admin.getId(), admin.getName());
+        for (; ; ) {
             System.out.println("\uD83D\uDD11 현재 비밀번호 입력 >> ");
+            scan.nextLine();
             String password = scan.nextLine();
             if (admin.getPassword().equals(password)) {
                 System.out.println("[정보]로그인 확인 되었습니다.");
@@ -358,19 +430,19 @@ public class AdminView {
                         "\n========================================\n\n");
                 for (; ; ) {
                     System.out.println("정말 수정한 정보로 저장하시겠습니까? (Y/N) >> ");
-                    String confrim = scan.nextLine();
-                    if (confrim.equals("Y")) {
+                    String confirm = scan.nextLine();
+                    if (confirm.equals("Y")) {
                         admin.setId(newid);
                         admin.setName(name);
                         admin.setPassword(newPassword);
-                        boolean result = UserController.getInstance().update(admin);
+                        boolean result = uc.update(admin);
                         if (result) {
                             System.out.println("\n✓ 관리자 정보가 성공적으로 업데이트되었습니다!\n\n");
                             break;
                         } else {
                             System.out.println("[오류]관리자 정보 수정을 실패하였습니다.백엔드문제");
                         }
-                    } else if (confrim.equals("N")) {
+                    } else if (confirm.equals("N")) {
                         System.out.println("\n✕ 수정을 취소합니다. 이전 화면으로 돌아갑니다.\n\n");
                         break;
                     } else {
@@ -384,18 +456,19 @@ public class AdminView {
             break;
         }
     }
+
     /**
      *
-     * @param store_no 매장 번호
+     * @param storeNo 매장 번호
      * @apiNote "좌석 배치 관리" 화면
      * @implNote 관리자 메인화면 -> 매장 선택 -> 2. 좌석배치관리 클릭 시 호출되는 화면
      */
-    public void seatManagementView(int store_no){
-        for(;;) {
+    public void seatManagementView(int storeNo) {
+        for (; ; ) {
             // STATUS
-            StoreDto store = sc.getStore(store_no);
+            StoreDto store = sc.getStore(storeNo);
             String storeName = store.getName();
-            ArrayList<SeatDto> seats = seatC.getSeats(store_no);
+            ArrayList<SeatDto> seats = seatC.getSeats(storeNo);
             int maxSeats = SeatPolicy.MAX_SEAT_COLUMN_COUNT * SeatPolicy.MAX_SEAT_ROW_COUNT;
             int totalSeats = seats.size();
 
@@ -417,41 +490,42 @@ public class AdminView {
             System.out.print("선택 > ");
             int ch = scan.nextInt();
             if (ch == 1) {
-                seatActivatingView(store_no);
+                seatActivatingView(storeNo);
             } else if (ch == 2) {
-                int result = seatC.activateAllSeat(store_no);
-                if(result == maxSeats){
+                int result = seatC.activateAllSeat(storeNo);
+                if (result == maxSeats) {
                     System.out.println("✓ 모든 좌석이 활성화되었습니다!");
-                }
-                else{
-                    System.out.printf("✕ %d개의 좌석 중 %d개의 좌석만 활성화에 성공했습니다.\n",maxSeats, result);
+                } else {
+                    System.out.printf("✕ %d개의 좌석 중 %d개의 좌석만 활성화에 성공했습니다.\n", maxSeats, result);
                 }
             } else if (ch == 3) {
-                int result = seatC.deactivateAllSeat(store_no);
-                if(result == totalSeats){
+                int result = seatC.deactivateAllSeat(storeNo);
+                if (result == totalSeats) {
                     System.out.println("✓ 모든 좌석이 비활성화되었습니다!");
-                }
-                else{
-                    System.out.printf("✕ %d개의 좌석 중 %d개의 좌석만 비활성화에 성공했습니다.\n",totalSeats, result);
+                } else {
+                    System.out.printf("✕ %d개의 좌석 중 %d개의 좌석만 비활성화에 성공했습니다.\n", totalSeats, result);
                 }
             } else if (ch == 4) {
                 return;
             }
         }
     }
-    public void seatActivatingView(int store_no){
+
+    public void seatActivatingView(int storeNo) {
         System.out.println("╔══════════════════════════════════════════════════╗");
         System.out.println("║                  좌석 활성화/비활성화                 ║");
         System.out.println("╚══════════════════════════════════════════════════╝");
         System.out.println();
-        for(;;) {
-            ArrayList<SeatDto> seats = seatC.getSeats(store_no);
+        for (; ; ) {
+            ArrayList<SeatDto> seats = seatC.getSeats(storeNo);
             SeatChart.showSeatingChartForSeatManagement(seats);
             System.out.println("활성화/비활성화할 좌석의 좌표를 입력하세요 (예 : B-4)");
             System.out.print("입력 (뒤로가기 : 0) > ");
             String input = scan.next();
-            if(Objects.equals(input, "0")) { return; }
-            int result = seatC.toggleSeatStatus(store_no, input);
+            if (Objects.equals(input, "0")) {
+                return;
+            }
+            int result = seatC.toggleSeatStatus(storeNo, input);
             if (result == 0) {
                 System.out.println("실패");
             } else if (result == 1) {
@@ -464,59 +538,47 @@ public class AdminView {
         }
     }
 
-    public void adminReservationView(int store_no, String storeName) {
-        while (true) {
-            System.out.println("\n╔══════════════════════════════════════════════════╗");
-            System.out.println("║                    전체 예약 내역                   ║");
-            System.out.println("╚══════════════════════════════════════════════════╝");
-            System.out.println("매장: " + storeName);
-            System.out.println("조회일: " + LocalDate.now());
-            System.out.println();
+    public void adminReservationView(int storeNo) {
+        StoreDto selectedStore = sc.getStore(storeNo);
+        String storeName = selectedStore.getName();
+        System.out.println("\n╔══════════════════════════════════════════════════╗");
+        System.out.println("║                    전체 예약 내역                   ║");
+        System.out.println("╚══════════════════════════════════════════════════╝");
+        System.out.println("매장: " + storeName);
+        System.out.println("조회일: " + LocalDate.now());
+        System.out.println();
 
-            // [C 담당자 영역] 좌석 배치도 출력
-            ArrayList<SeatDto> seats = seatC.getSeats(store_no);
-            SeatChart.showSeatingChartForReservationManagement(seats, storeName);
+        // [C 담당자 영역] 좌석 배치도 출력
+        ArrayList<SeatDto> seats = seatC.getSeats(storeNo);
+        SeatChart.showSeatingChartForReservationManagement(seats, storeName);
 
-            // [B 담당자 영역] 예약 목록 출력 (데이터를 받아서 직접 출력)
-            ArrayList<ReservationDto> result = ReservationController.getInstance().getStoreReservations(store_no);
+        // [B 담당자 영역] 예약 목록 출력 (데이터를 받아서 직접 출력)
+        ArrayList<ReservationDto> result = ReservationController.getInstance().getStoreReservations(storeNo);
 
-            System.out.println("\n========================================");
-            System.out.printf("           예약 목록 (총 %d건)\n", result.size());
-            System.out.println("========================================\n");
+        System.out.println("\n========================================");
+        System.out.printf("           예약 목록 (총 %d건)\n", result.size());
+        System.out.println("========================================\n");
 
-            if (result.isEmpty()) {
-                System.out.println("   현재 예약된 내역이 없습니다.");
-            } else {
-                int index = 1;
-                for (ReservationDto dto : result) {
-                    System.out.printf("[%d]\n", index++);
-                    System.out.println("예약자: " + dto.getUserName() + " (" + dto.getUserId() + ")");
-                    System.out.println("좌석: " + dto.getSeat_code());
+        if (result.isEmpty()) {
+            System.out.println("   현재 예약된 내역이 없습니다.");
+        } else {
+            int index = 1;
+            for (ReservationDto dto : result) {
+                System.out.printf("[%d]\n", index++);
+                System.out.println("예약자: " + dto.getUserName() + " (" + dto.getUserId() + ")");
+                System.out.println("좌석: " + dto.getSeat_code());
 
-                    String date = dto.getReservedAt();
-                    if (date != null && date.length() > 19) {
-                        date = date.substring(0, 19);
-                    }
-                    
-                    System.out.println("상태: ✅ 예약확정");
-                    System.out.println("예약일시: " + date);
-                    System.out.println("----------------------------------------");
+                String date = dto.getReservedAt();
+                if (date != null && date.length() > 19) {
+                    date = date.substring(0, 19);
                 }
-            }
 
-            System.out.println("n. 다음 페이지 | p. 이전 페이지 | 0. 뒤로 가기");
-            System.out.print("선택 >> ");
-            String ch = scan.next();
-
-            if (ch.equals("0")) {
-                break;
-            } else if (ch.equalsIgnoreCase("n")) {
-                System.out.println(">> 다음 페이지로 이동합니다.");
-            } else if (ch.equalsIgnoreCase("p")) {
-                System.out.println(">> 이전 페이지로 이동합니다.");
-            } else {
-                System.out.println(">> 잘못된 입력입니다.");
+                System.out.println("상태: ✅ 예약확정");
+                System.out.println("예약일시: " + date);
+                System.out.println("----------------------------------------");
             }
         }
+        System.out.print("뒤로 가시려면 아무 값이나 입력하세요 > ");
+        scan.nextInt();
     }
 }
