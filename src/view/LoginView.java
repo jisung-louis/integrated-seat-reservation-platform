@@ -97,7 +97,9 @@ public class LoginView {
         System.out.println();
         System.out.print("아이디 > "); String id = scan.next();
         System.out.print("비밀번호 > "); String password = scan.next();
-        System.out.print("이름 > "); String name = scan.next();
+        System.out.print("이름 > ");
+        scan.nextLine();
+        String name = scan.nextLine();
         System.out.println();
         boolean result = uc.signup(id, password, name, isAdmin);
         System.out.println(result ? "✓ 회원가입 성공!" : "✕ 회원가입 실패!");
