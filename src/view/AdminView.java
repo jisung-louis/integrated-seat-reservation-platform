@@ -214,18 +214,18 @@ public class AdminView {
                             "3. 뒤로 가기\n" +
                             "\n" +
                             "선택 >>");
-            String input = scan.nextLine();
-            if (input.equals("1")) {
+            int input = scan.nextInt();
+            if (input == 1) {
                 storeUpdateView(storeNo);
             } // 매장 수정 선택 시 -> storeUpdateView 로 이동
-            else if (input.equals("2")) {
+            else if (input == 2) {
                 storeDeleteView(storeNo);
                 break;
             } // 매장 삭제 선택 시 -> storeDeleteView 로 이동
-            else if (input.equals("3")) {
+            else if (input == 3) {
                 break;
             }                        // 뒤로 가기 선택 시 -> managementView로 이동
-            else if (input.isEmpty()) {
+            else if (input == 4) {
                 System.out.println("[오류]아무것도 입력하지 않았습니다.다시 입력해주세요.");
             }   // 입력하지 않았을 경우 반복
             else {
