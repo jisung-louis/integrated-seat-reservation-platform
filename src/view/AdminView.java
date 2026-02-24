@@ -148,7 +148,7 @@ public class AdminView {
             System.out.printf("╚══════════════════════════════════════════════════╝\n\n");
             System.out.printf("\uD83D\uDCC5 오늘 날짜: %s\n", now);
             System.out.println("\n========================================\n");
-            System.out.printf("\uD83D\uDCCB 매장명: %s\n" + "========================================\n\n", selectedStore.getName());
+            System.out.printf("\uD83D\uDCCB 매장명: %s\n" + "========================================\n\n", storeName);
             System.out.print(
                     "\uD83D\uDD39 매장 관리\n" +
                             "1. 매장 정보 관리\n" +
@@ -161,24 +161,18 @@ public class AdminView {
                             "4. 뒤로가기\n" +
                             "\n" +
                             "선택 >> ");
-            scan.nextLine();
-            String input = scan.nextLine();
-            if (input.equals("1")) {
+            int input = scan.nextInt();
+            if (input == 1) {
                 storeManagementView(storeNo);
             } // 매장 정보 관리 선택 시 -> storeManagementView 로 이동
-            else if (input.equals("2")) {
+            else if (input == 2) {
                 seatManagementView(storeNo);
             } // 좌석 배치 관리 선택 시 -> setManagementView 로 이동
-            else if (input.equals("3")) {
+            else if (input == 3) {
                 adminReservationView(storeNo);
             } // 예약 내역 조회 선택시 -> adminReservationView 로 이동
-            else if (input.equals("4")) {
+            else if (input == 4) {
                 break;
-            }
-            else if (input.isEmpty()
-                    || Integer.parseInt(input) < 1
-                    || Integer.parseInt(input) > 4) {    // 입력 번호가 다를때
-                System.out.println("[오류]입력하신 번호가 잘못 되었습니다.다시 입력해주세요");
             } else {
                 System.out.println("[오류]잘못된 입력입니다.");
             }
