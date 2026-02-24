@@ -573,6 +573,6 @@ public class AdminView {
             }
         }
         System.out.print("뒤로 가시려면 아무 값이나 입력하세요 > ");
-        scan.nextInt();
+        scan.next();
     }
 }
